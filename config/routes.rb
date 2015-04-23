@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  root "currencies#index"
+
   resources :exchange_rates
   resources :currencies
   # The priority is based upon order of creation: first created -> highest priority.

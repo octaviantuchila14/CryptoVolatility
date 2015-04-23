@@ -1,5 +1,6 @@
 class CurrenciesController < ApplicationController
   before_action :set_currency, only: [:show, :edit, :update, :destroy]
+  before_action :load_csv, only: :index
 
   # GET /currencies
   # GET /currencies.json
@@ -62,6 +63,21 @@ class CurrenciesController < ApplicationController
   end
 
   private
+
+    def load_csv
+      #if(@data_loaded == false)
+        #pattern match all csv files
+        Dir.foreach(Rails.root.join('tmp', 'csvFiles').to_s) do |item|
+          next if item.match(/\A(\.).*/)
+          currency, ref_currency = item.match(/([a-zA-Z]{3})_([a-zA-Z]{3}).*/i).captures
+          currency.downcase
+          ref_currency.downcase
+        end
+        #@data_loaded = true
+      #end
+      p "checked all files"
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_currency
       @currency = Currency.find(params[:id])
