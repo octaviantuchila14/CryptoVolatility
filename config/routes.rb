@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :exchange_data
+  resources :exchange_rates
   resources :currencies
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
