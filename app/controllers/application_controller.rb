@@ -17,14 +17,16 @@ class ApplicationController < ActionController::Base
       #read exchange rates from file
       csv_data = SmarterCSV.process(Rails.root.join('tmp', 'csvFiles', file.to_s).to_s)
       csv_data.each do |entry|
-        @exchange_rate = ExchangeRate.new
-        @exchange_rate.date = entry[:DATE]
-        @exchange_rate.time = entry[:TIME]
-        @exchange_rate.last = entry[:LAST]
-        @exchange_rate.high = entry[:HIGH]
-        @exchange_rate.low = entry[:LOW]
-        @exchange_rate.volume = entry[:VOLUME]
-        @exchange_rate.save
+        exchange_rate = ExchangeRate.new
+        exchange_rate.cr = currency
+        exchange_rate.ref_cr = ref_currency
+        exchange_rate.date = entry[:date]
+        exchange_rate.time = entry[:time]
+        exchange_rate.last = entry[:last]
+        exchange_rate.high = entry[:high]
+        exchange_rate.low = entry[:low]
+        exchange_rate.volume = entry[:volume]
+        exchange_rate.save
       end
     end
   end
