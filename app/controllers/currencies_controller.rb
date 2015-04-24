@@ -6,6 +6,7 @@ class CurrenciesController < ApplicationController
   # GET /currencies.json
   def index
     @currencies = Currency.all
+    p @currencies
   end
 
   # GET /currencies/1
@@ -71,6 +72,9 @@ class CurrenciesController < ApplicationController
         currency, ref_currency = item.match(/([a-zA-Z]{3})_([a-zA-Z]{3}).*/i).captures
         currency.downcase
         ref_currency.downcase
+        #create currencies if they don't exist
+        Currency.find_or_create_by(name: currency)
+        Currency.find_or_create_by(name: ref_currency)
       end
     end
 
