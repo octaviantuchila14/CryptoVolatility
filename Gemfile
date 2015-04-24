@@ -43,3 +43,5 @@ group :development, :test do
   gem 'spring'
 end
 
+#reading CSV file
+gem 'smarter_csv'
