@@ -45,3 +45,9 @@ end
 
 #reading CSV file
 gem 'smarter_csv'
+
+#querry API
+gem 'cryptocoincharts_api'
+
+#for cron jobs
+gem 'whenever', :require => false

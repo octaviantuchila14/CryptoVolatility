@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
       Currency.find_or_create_by(name: currency)
       Currency.find_or_create_by(name: ref_currency)
 
+=begin
       #read exchange rates from file
       csv_data = SmarterCSV.process(Rails.root.join('tmp', 'csvFiles', file.to_s).to_s)
       csv_data.each do |entry|
@@ -28,6 +29,7 @@ class ApplicationController < ActionController::Base
         exchange_rate.volume = entry[:volume]
         exchange_rate.save
       end
+=end
     end
   end
 
