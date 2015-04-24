@@ -3,6 +3,8 @@ namespace :query_api do
   task get_currency_values: :environment do
     #TODO create structure of currencies & combine them
 
+    #TODO create loop for all currency pairs
+
     p "querrying cryptocoincharts"
 
     client = CryptocoinchartsApi::Client.new
