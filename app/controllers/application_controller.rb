@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   def load_csv_file
+=begin
     #TODO do this only once, when the page is first loaded
     Dir.foreach(Rails.root.join('tmp', 'csvFiles').to_s) do |file|
       next if file.match(/\A(\.).*/)
@@ -13,7 +14,6 @@ class ApplicationController < ActionController::Base
       #create currencies if they don't exist
       Currency.find_or_create_by(name: currency)
       Currency.find_or_create_by(name: ref_currency)
-
 
       #read exchange rates from file
       csv_data = SmarterCSV.process(Rails.root.join('tmp', 'csvFiles', file.to_s).to_s)
@@ -31,6 +31,7 @@ class ApplicationController < ActionController::Base
       end
 
     end
+=end
   end
 
 end

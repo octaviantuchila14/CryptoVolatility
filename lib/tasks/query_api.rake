@@ -1,5 +1,7 @@
 namespace :query_api do
 
+  Rails.env = "development"
+
   task get_currency_values: :environment do
     #TODO create structure of currencies & combine them
 
@@ -22,7 +24,6 @@ namespace :query_api do
     end
 
     exchange_rate.save
-
   end
 
 end

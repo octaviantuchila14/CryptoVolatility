@@ -50,4 +50,4 @@ gem 'smarter_csv'
 gem 'cryptocoincharts_api'
 
 #for cron jobs
-gem 'whenever', :require => false
+gem 'whenever', require: false
