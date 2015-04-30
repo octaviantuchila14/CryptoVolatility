@@ -15,7 +15,7 @@ class Market < ActiveRecord::Base
     market_data = ExchangeRate.where(subject: self.name)
     #compute differences between 2 consecutive days
     lastValues = market_data.map{ |elem| elem[:last] }
-    lastValues.each_cons(2).to_a.map { |elem| elem[0] - elem[1]}
+    lastValues.each_cons(2).to_a.map { |elem| elem[1] - elem[0]}
   end
 
 end
