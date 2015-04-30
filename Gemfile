@@ -56,4 +56,4 @@ gem 'whenever', require: false
 gem 'yahoo-finance', require: 'yahoo_finance'
 
 #getting data statistics
-gem 'statsample'
+gem 'descriptive_statistics', '~> 2.4.0', :require => 'descriptive_statistics/safe'

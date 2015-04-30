@@ -10,6 +10,9 @@ class MarketsController < ApplicationController
   # GET /markets/1
   # GET /markets/1.json
   def show
+    @market = Market.find_by_id(params[:id])
+    @mean = @market.get_mean
+    @sd = @market.get_volatility
   end
 
   # GET /markets/new

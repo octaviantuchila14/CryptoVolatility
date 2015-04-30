@@ -23,7 +23,11 @@ namespace :query_api do
       exchange_rate.volume = elem[:volume_first]
     end
 
-    exchange_rate.save
+    #check if I don't have rate already
+    if ExchangeRate.where(date: exchange_rate.date, time: exchange_rate.time).blank?
+      exchange_rate.save
+    end
+
   end
 
 
@@ -32,14 +36,19 @@ namespace :query_api do
     p "getting market data from Yahoo"
     data = YahooFinance.historical_quotes("^GSPC", { raw: :false, start_date: Date.today - 365, period: :daily})
 
-    Market.create(name: "^GSPC")
-    data.foreach do |daily_data|
+    Market.where(name: "^GSPC").first_or_create
+    data.each do |daily_data|
       exchange_rate = ExchangeRate.new
       exchange_rate.subject = "^GSPC"
       exchange_rate.ref_cr = 'usd'
       exchange_rate.date = daily_data[:start_date]
       exchange_rate.last = daily_data[:close]
-      exchange_rate.save
+
+      #check if I don't have rate already
+      if ExchangeRate.where(date: exchange_rate.date).blank?
+        exchange_rate.save
+      end
+
     end
   end
 

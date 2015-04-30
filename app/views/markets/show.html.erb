@@ -3,8 +3,8 @@
 <p>
   <strong>Name:</strong>
   <%= @market.name %>
-  <%= @market.get_mean %>
-  <%= @market.get_volatility %>
+  <%= @mean %>
+  <%= @sd%>
 </p>
 
 <%= link_to 'Edit', edit_market_path(@market) %> |
