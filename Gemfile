@@ -51,3 +51,9 @@ gem 'cryptocoincharts_api'
 
 #for cron jobs
 gem 'whenever', require: false
+
+#for getting market data
+gem 'yahoo-finance', require: 'yahoo_finance'
+
+#getting data statistics
+gem 'statsample'

@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
       csv_data = SmarterCSV.process(Rails.root.join('tmp', 'csvFiles', file.to_s).to_s)
       csv_data.each do |entry|
         exchange_rate = ExchangeRate.new
-        exchange_rate.cr = currency
+        exchange_rate.subject = currency
         exchange_rate.ref_cr = ref_currency
         exchange_rate.date = entry[:date]
         exchange_rate.time = entry[:time]

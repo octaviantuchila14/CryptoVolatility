@@ -13,7 +13,7 @@ namespace :query_api do
     pair = client.trading_pairs pairs: "btc_usd"
 
     exchange_rate = ExchangeRate.new
-    exchange_rate.cr = 'btc'
+    exchange_rate.subject = 'btc'
     exchange_rate.ref_cr = 'usd'
     exchange_rate.date = Date.new
     exchange_rate.time = Time.new
@@ -24,6 +24,23 @@ namespace :query_api do
     end
 
     exchange_rate.save
+  end
+
+
+  task get_market_data: :environment do
+
+    p "getting market data from Yahoo"
+    data = YahooFinance.historical_quotes("^GSPC", { raw: :false, start_date: Date.today - 365, period: :daily})
+
+    Market.create(name: "^GSPC")
+    data.foreach do |daily_data|
+      exchange_rate = ExchangeRate.new
+      exchange_rate.subject = "^GSPC"
+      exchange_rate.ref_cr = 'usd'
+      exchange_rate.date = daily_data[:start_date]
+      exchange_rate.last = daily_data[:close]
+      exchange_rate.save
+    end
   end
 
 end
