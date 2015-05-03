@@ -62,3 +62,6 @@ gem 'statsample'
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
 end
+
+#neural networks
+gem 'ruby-fann'

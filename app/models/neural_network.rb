@@ -1,25 +1,21 @@
+require 'ruby-fann'
+
 class NeuralNetwork < ActiveRecord::Base
   #for now, it predicts only the following day
   MAX_INPUT_LAYER_SIZE = 7
   MAX_HIDDEN_LAYER_SIZE = 11
-  MAX_EPOCHS = 10
+  MAX_EPOCHS = 1000
+  MAX_OUTPUTS = 1
+  MSE = 0.1
 
-=begin
-  #returns & expectedReturns are of type ExchangeRate
-  def optimize_parameters(returns, expectedReturns)
-
-    best_f1 = -1
-    bils = -1, bhls = -1, be = -1
-
-    (1..MAX_INPUT_LAYER_SIZE).each do |ils|
-      (1..MAX_HIDDEN_LAYER_SIZE).each do |hls|
-        (1..MAX_EPOCHS).each do |e|
-
-        end
-      end
-    end
-
+  def train(inputs, desired_outputs)
+    train = RubyFann::TrainData.new(inputs: inputs, desired_outputs: desired_outputs)
+    @fann = RubyFann::Standard.new(:num_inputs=>3, :hidden_neurons=>[2, 8, 4, 3, 4], :num_outputs=>1)
+    @fann.train_on_data(train, MAX_EPOCHS, 10, MSE) # 1000 max_epochs, 10 errors between reports and 0.1 desired MSE (mean-squared-error)
   end
-=end
+
+  def predict(input)
+    @fann.run(input)
+  end
 
 end

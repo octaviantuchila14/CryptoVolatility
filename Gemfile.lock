@@ -150,6 +150,7 @@ GEM
       rspec-mocks (~> 3.2.0)
       rspec-support (~> 3.2.0)
     rspec-support (3.2.2)
+    ruby-fann (1.2.6)
     ruby-ole (1.2.11.8)
     rubyvis (0.5.2)
     sass (3.4.13)
@@ -214,6 +215,7 @@ DEPENDENCIES
   jquery-rails
   rails (= 4.2.1)
   rspec-rails (~> 3.0)
+  ruby-fann
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   smarter_csv
