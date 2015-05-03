@@ -25,10 +25,7 @@ class Market < ActiveRecord::Base
     if(asset_rates.size < market_rates.size)
       market_rates = market_rates.last(asset_rates.size)
     end
-    p asset_rates
-    p market_rates
-    p "covariance is:"
-    p Statsample::Bivariate.covariance(market_rates, asset_rates)
+
     Statsample::Bivariate.covariance(market_rates, asset_rates)
   end
 

@@ -11,7 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150430134753) do
+ActiveRecord::Schema.define(version: 20150503115254) do
+
+  create_table "capms", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name"
@@ -36,6 +41,14 @@ ActiveRecord::Schema.define(version: 20150430134753) do
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "neural_networks", force: :cascade do |t|
+    t.integer  "epochs"
+    t.integer  "hidden_layer_size"
+    t.integer  "input_layer_size"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
 end
