@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Market, type: :model do
   it "computes expected return and variance of dataset" do
-    market = Market.create(name: "^GSPC")
+    market = FactoryGirl.create(:market)
     FactoryGirl.create(:exchange_rate, subject: "^GSPC", last: 0, date: Date.today)
     FactoryGirl.create(:exchange_rate, subject: "^GSPC", last: 5, date: Date.today + 1)
     FactoryGirl.create(:exchange_rate, subject: "^GSPC", last: 15, date: Date.today + 2)

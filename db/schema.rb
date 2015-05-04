@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150504195957) do
+ActiveRecord::Schema.define(version: 20150504203036) do
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name"
@@ -50,6 +50,18 @@ ActiveRecord::Schema.define(version: 20150504195957) do
     t.integer  "input_layer_size"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
+  end
+
+  create_table "predicted_rates", force: :cascade do |t|
+    t.date     "date"
+    t.float    "value"
+    t.string   "subject"
+    t.string   "ref_cr"
+    t.float    "f1"
+    t.float    "accuracy"
+    t.float    "precision"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
