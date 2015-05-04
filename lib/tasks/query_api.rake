@@ -45,6 +45,7 @@ namespace :query_api do
       exchange_rate.ref_cr = 'usd'
       exchange_rate.date = daily_data[:start_date]
       exchange_rate.last = daily_data[:close]
+      exchange_rate.time = Time.now
 
       #check if I don't have rate already
       if ExchangeRate.where(date: exchange_rate.date).blank?
