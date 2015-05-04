@@ -11,12 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150504125051) do
-
-  create_table "capms", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
+ActiveRecord::Schema.define(version: 20150504195957) do
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name"
@@ -36,6 +31,11 @@ ActiveRecord::Schema.define(version: 20150504125051) do
     t.datetime "updated_at", null: false
     t.string   "subject"
     t.string   "ref_cr"
+  end
+
+  create_table "financial_models", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "markets", force: :cascade do |t|
