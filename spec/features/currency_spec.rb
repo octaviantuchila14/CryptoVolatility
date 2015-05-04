@@ -16,7 +16,7 @@ feature 'User navigates to the home page' do
   scenario 'she sees a list of cryptocurrencies' do
     visit '/'
     click_link 'Show'
-    expect(page).to have_content 'Predict'
+    expect(page).to have_content "#{Date.today}"
   end
 
 end
