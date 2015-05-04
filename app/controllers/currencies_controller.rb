@@ -6,7 +6,6 @@ class CurrenciesController < ApplicationController
   # GET /currencies.json
   def index
     @currencies = Currency.all
-    p @currencies
   end
 
   # GET /currencies/1

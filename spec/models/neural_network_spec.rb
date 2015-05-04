@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe NeuralNetwork, type: :model do
 
-  ACCEPTED_ERROR = 0.01
+  ACCEPTED_ERROR = 0.3
 
   #tests training function
   it "can create a f(x) = x function" do
