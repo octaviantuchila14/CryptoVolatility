@@ -26,6 +26,6 @@ every 1.day do
   rake "query_api:get_currency_values"
 end
 
-every 1.minute do
+every 1.day do
   rake "query_api:get_market_data"
 end

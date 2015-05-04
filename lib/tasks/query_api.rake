@@ -15,16 +15,18 @@ namespace :query_api do
     exchange_rate = ExchangeRate.new
     exchange_rate.subject = 'btc'
     exchange_rate.ref_cr = 'usd'
-    exchange_rate.date = Date.new
-    exchange_rate.time = Time.new
+    exchange_rate.date = Date.today
+    exchange_rate.time = Time.now
 
+    p exchange_rate.date
     pair.each do |elem|
       exchange_rate.last = elem[:price]
       exchange_rate.volume = elem[:volume_first]
     end
 
     #check if I don't have rate already
-    if ExchangeRate.where(date: exchange_rate.date, time: exchange_rate.time).blank?
+    #if ExchangeRate.where(date: exchange_rate.date, time: exchange_rate.time).blank?
+    if ExchangeRate.where(date: exchange_rate.date).blank?
       exchange_rate.save
     end
 
