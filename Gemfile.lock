@@ -215,7 +215,7 @@ DEPENDENCIES
   jquery-rails
   rails (= 4.2.1)
   rspec-rails (~> 3.0)
-  ruby-fann
+  ruby-fann (~> 1.2.6)
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   smarter_csv

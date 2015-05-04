@@ -64,4 +64,4 @@ group :development, :test do
 end
 
 #neural networks
-gem 'ruby-fann'
+gem 'ruby-fann', '~> 1.2.6'

@@ -9,6 +9,8 @@ class NeuralNetwork < ActiveRecord::Base
   MSE = 0.1
 
   def train(inputs, desired_outputs)
+    p inputs
+    p desired_outputs
     train = RubyFann::TrainData.new(inputs: inputs, desired_outputs: desired_outputs)
     @fann = RubyFann::Standard.new(:num_inputs=>3, :hidden_neurons=>[2, 8, 4, 3, 4], :num_outputs=>1)
     @fann.train_on_data(train, MAX_EPOCHS, 10, MSE) # 1000 max_epochs, 10 errors between reports and 0.1 desired MSE (mean-squared-error)
