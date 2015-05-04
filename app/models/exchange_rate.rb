@@ -1,7 +1,8 @@
 class ExchangeRate < ActiveRecord::Base
-  validates :subject, presence: true
-  validates :ref_cr, presence: true
-  validates :last, presence: true
-  validates :date, presence: true
+  validates_presence_of :subject
+  validates_presence_of :ref_cr
+  validates_presence_of :last
+  validates_presence_of :date
+  validates_uniqueness_of :date
 
 end
