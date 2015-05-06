@@ -4,7 +4,10 @@ Rails.application.routes.draw do
   root "currencies#index"
 
   resources :exchange_rates
+  #get 'currencies/:id/:days', to: 'currencies#predict'
   resources :currencies
+  resources :neural_networks
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

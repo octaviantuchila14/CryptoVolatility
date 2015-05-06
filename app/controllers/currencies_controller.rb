@@ -29,6 +29,8 @@ class CurrenciesController < ApplicationController
 
     respond_to do |format|
       if @currency.save
+        #create a neural network corresponding to the currency
+        @currency.create_neural_network
         format.html { redirect_to @currency, notice: 'Currency was successfully created.' }
         format.json { render :show, status: :created, location: @currency }
       else

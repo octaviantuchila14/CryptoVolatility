@@ -1,0 +1,17 @@
+<%= form_for(@neural_network) do |f| %>
+  <% if @neural_network.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@neural_network.errors.count, "error") %> prohibited this neural_network from being saved:</h2>
+
+      <ul>
+      <% @neural_network.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
