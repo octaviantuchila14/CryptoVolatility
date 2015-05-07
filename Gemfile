@@ -67,3 +67,5 @@ end
 
 #neural networks
 gem 'ruby-fann', '~> 1.2.6'
+
+#for defining constants
