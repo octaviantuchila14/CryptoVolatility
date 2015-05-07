@@ -29,7 +29,7 @@ class NeuralNetwork < ActiveRecord::Base
 
   def predict
     if(self.prediction == nil)
-      @exchange_rates = ExchangeRate.where(subject: self.currency.name)
+      @exchange_rates = self.currency.exchange_rates
       #@exchange_rates = ExchangeRate.where(subject: self.currency.name, date: Date.today - self.max_nr_of_days..Date.today)
       @exchange_rates.sort_by { |er| er.date}
       daily_values = []

@@ -29,8 +29,6 @@ class CurrenciesController < ApplicationController
 
     respond_to do |format|
       if @currency.save
-        #create a neural network corresponding to the currency
-        @currency.create_neural_network
         format.html { redirect_to @currency, notice: 'Currency was successfully created.' }
         format.json { render :show, status: :created, location: @currency }
       else
@@ -45,9 +43,9 @@ class CurrenciesController < ApplicationController
   def update
     respond_to do |format|
       if @currency.update(currency_params)
-        #prediction = @currency.neural_network.predict
-        format.html { redirect_to @currency, notice: 'Currency was successfully updated.' }
-        format.json { render :show, status: :ok, location: @currency }
+        prediction = @currency.neural_network.predict
+        p "getting prediction"
+        redirect_to prediction
       else
         format.html { render :edit }
         format.json { render json: @currency.errors, status: :unprocessable_entity }

@@ -3,6 +3,12 @@ class Currency < ActiveRecord::Base
   validates :full_name, presence: true
   validates_uniqueness_of :name
   has_one :neural_network, inverse_of: :currency
+  has_many :exchange_rates
+
+  self.after_initialize do
+    #create a neural network corresponding to the currency
+    create_neural_network
+  end
 
 =begin
   #returns prediction for a number of days after

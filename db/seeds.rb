@@ -5,3 +5,8 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+currency = Currency.create(name: "btc", full_name: "Bitcoin")
+100.times do |i|
+  currency.exchange_rates << ExchangeRate.create(subject: currency.name, date: Date.today - i, last: i)
+end

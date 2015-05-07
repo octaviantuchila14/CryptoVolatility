@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150507160153) do
+ActiveRecord::Schema.define(version: 20150507185151) do
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20150507160153) do
     t.string   "ref_cr"
     t.boolean  "predicted"
     t.integer  "prediction_id"
+    t.integer  "currency_id"
   end
 
   create_table "financial_models", force: :cascade do |t|
@@ -55,18 +56,6 @@ ActiveRecord::Schema.define(version: 20150507160153) do
     t.datetime "updated_at",        null: false
     t.integer  "currency_id"
     t.integer  "max_nr_of_days"
-  end
-
-  create_table "predicted_rates", force: :cascade do |t|
-    t.date     "date"
-    t.float    "value"
-    t.string   "subject"
-    t.string   "ref_cr"
-    t.float    "f1"
-    t.float    "accuracy"
-    t.float    "precision"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "predictions", force: :cascade do |t|
