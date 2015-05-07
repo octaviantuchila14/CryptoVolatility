@@ -23,7 +23,13 @@ class NeuralNetwork < ActiveRecord::Base
     @fann.train_on_data(train, MAX_EPOCHS, 0, MSE) # 1000 max_epochs, 10 errors between reports and 0.1 desired MSE (mean-squared-error)
   end
 
+
   def give_result(days = self.max_nr_of_days)
+  end
+
+  #make market data be between 0 and 1
+  def normalise
+
   end
 
 end

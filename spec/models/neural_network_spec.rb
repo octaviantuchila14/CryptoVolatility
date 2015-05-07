@@ -40,9 +40,7 @@ RSpec.describe NeuralNetwork, type: :model do
     end
 
     prediction = currency.neural_network.give_result
-    expect(prediction.f1).to be between(0, 1)
-    expect(prediction.accuracy).to be between(0, 1)
-    expect(prediction.recall).to be between(0, 1)
+    expect(prediction.average_difference).to be > 0
   end
 
 end

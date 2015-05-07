@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :predictions
   resources :markets
   root "currencies#index"
 
