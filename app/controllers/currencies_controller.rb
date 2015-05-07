@@ -45,6 +45,7 @@ class CurrenciesController < ApplicationController
   def update
     respond_to do |format|
       if @currency.update(currency_params)
+        #prediction = @currency.neural_network.predict
         format.html { redirect_to @currency, notice: 'Currency was successfully updated.' }
         format.json { render :show, status: :ok, location: @currency }
       else
