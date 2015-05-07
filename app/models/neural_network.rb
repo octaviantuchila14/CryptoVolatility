@@ -39,12 +39,12 @@ class NeuralNetwork < ActiveRecord::Base
       optimise_training daily_values
 
       self.create_prediction
-      self.prediction.average_difference = optimise_training(daily_values)
+      self.prediction.average_difference = optimise_training(daily_values) * NORMALISATION_CONSTANT
 
       predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map{|dv| dv * NORMALISATION_CONSTANT})
       (0..predicted_rates.size).each do |i|
         #ASS: I'm getting the data for today at the beginning of the day
-        self.prediction.exchange_rates << ExchangeRate.new(last: predicted_rate[i], date: Date.today + i + 1)
+        self.prediction.exchange_rates << ExchangeRate.new(last: predicted_rates[i], date: Date.today + i + 1)
       end
     end
 
@@ -73,14 +73,15 @@ class NeuralNetwork < ActiveRecord::Base
 
   #TODO: maybe search a way of quantifying the difference between outputs and desired outputs which is better than the average difference
   def validate(inputs, desired_outputs)
-    avg = 0.0, nr = 0
+    avg = 0.0
+    nr = 0
+    p "avg is #{avg.class} "
     (0..inputs.size - 1).each do |i|
       output = @fann.run(inputs[i])
-      array_diff = (output - desired_outputs[i]).map{ |x| x.abs }
-      sum_diff = array_diff
-      avg += sum_diff
+      avg += (output - desired_outputs[i]).map{ |x| x.abs }.reduce(:+)
       nr += output.size
     end
+    p "avg divided by nr is #{avg/nr}"
     avg / nr
   end
 

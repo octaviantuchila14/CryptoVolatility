@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150507120735) do
+ActiveRecord::Schema.define(version: 20150507152541) do
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name"
@@ -70,7 +70,7 @@ ActiveRecord::Schema.define(version: 20150507120735) do
   end
 
   create_table "predictions", force: :cascade do |t|
-    t.integer  "average_difference"
+    t.float    "average_difference"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
     t.integer  "neural_network_id"
