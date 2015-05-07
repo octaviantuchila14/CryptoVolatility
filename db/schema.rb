@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150507185151) do
+ActiveRecord::Schema.define(version: 20150507185719) do
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name"
@@ -28,11 +28,11 @@ ActiveRecord::Schema.define(version: 20150507185151) do
     t.float    "high"
     t.float    "low"
     t.float    "volume"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.string   "subject"
     t.string   "ref_cr"
-    t.boolean  "predicted"
+    t.boolean  "predicted",     default: false
     t.integer  "prediction_id"
     t.integer  "currency_id"
   end
