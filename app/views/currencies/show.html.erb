@@ -6,7 +6,7 @@
 </p>
 
 <%=form_for @currency.neural_network do |f| %>
-    <%= f.label "Days" %><br />
+    <%= f.label "Days" %>
     <%= f.select(:prediction_days, [1..30]) %>
     <%= f.submit "Predict", class: "btn btn-primary" %>
 <% end %>

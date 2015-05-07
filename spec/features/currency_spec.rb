@@ -23,7 +23,7 @@ feature 'User navigates to the home page' do
   scenario 'she sees a drop down and can select a number of days between 1 and 30' do
     visit '/'
     click_link 'Show'
-    expect(page).to have_selector
+    expect(page).to have_selector('select_days')
   end
 
 end
