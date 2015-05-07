@@ -35,11 +35,11 @@ RSpec.describe NeuralNetwork, type: :model do
   it "returns a prediction having 30 days" do
     currency = FactoryGirl.create(:currency)
     currency.create_neural_network
-    (1..30 + 1).each do
-      FactoryGirl.create(:exchange_rate, name: currency.name)
+    (1..30 + 1).each do |i|
+      FactoryGirl.create(:exchange_rate, subject: currency.name, last: 10*i, date: Date.today - i)
     end
 
-    prediction = currency.neural_network.give_result
+    prediction = currency.neural_network.predict
     expect(prediction.average_difference).to be > 0
   end
 
