@@ -13,6 +13,7 @@ class NeuralNetwork < ActiveRecord::Base
   MSE = 0.0000000001
   ACCEPTABLE_ERROR = 0.01
   NORMALISATION_CONSTANT = 2000
+  TRAINING_DATA_PERCENTAGE = 0.8
 
   self.after_initialize do
     self.max_nr_of_days = 30
@@ -38,18 +39,49 @@ class NeuralNetwork < ActiveRecord::Base
       optimise_training daily_values
 
       self.create_prediction
-      self.prediction.exchange_rates = @fann.run(daily_values.last(self.max_nr_of_days))
+      self.prediction.average_difference = optimise_training(daily_values)
+
+      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map{|dv| dv * NORMALISATION_CONSTANT})
+      (0..predicted_rates.size).each do |i|
+        #ASS: I'm getting the data for today at the beginning of the day
+        self.prediction.exchange_rates << ExchangeRate.new(last: predicted_rate[i], date: Date.today + i + 1)
+      end
     end
+
     prediction
   end
 
   #TODO: make it vary the parameters for input layer size, hidden layer size, number of epochs
   def optimise_training(daily_values)
     inputs = [], outputs = []
-    (1..(daily_values.size - self.max_nr_of_days - MAX_INPUT_LAYER_SIZE)) do |i|
-      inputs << daily_values.between(i, i + MAX_INPUT_LAYER_SIZE - 1)
-      outputs << daily_values.between(i + MAX_INPUT_LAYER_SIZE, i + self.max_nr_of_days + MAX_INPUT_LAYER_SIZE - 1)
-    train(inputs, outputs)
+    (0..(daily_values.size - self.max_nr_of_days - MAX_INPUT_LAYER_SIZE)).each do |i|
+      inputs[i] = daily_values[i .. i + MAX_INPUT_LAYER_SIZE - 1]
+      outputs[i] = daily_values[i + MAX_INPUT_LAYER_SIZE .. i + self.max_nr_of_days + MAX_INPUT_LAYER_SIZE - 1]
+    end
+
+    nr_train = (TRAINING_DATA_PERCENTAGE*inputs.size).floor
+    nr_validate = inputs.size - nr_train
+
+    train_inputs = inputs.first(nr_train)
+    train_outputs = outputs.first(nr_train)
+    validate_inputs = inputs.last(nr_validate)
+    validate_outputs = outputs.last(nr_validate)
+
+    train(train_inputs, train_outputs)
+    validate(validate_inputs, validate_outputs)
+  end
+
+  #TODO: maybe search a way of quantifying the difference between outputs and desired outputs which is better than the average difference
+  def validate(inputs, desired_outputs)
+    avg = 0.0, nr = 0
+    (0..inputs.size - 1).each do |i|
+      output = @fann.run(inputs[i])
+      array_diff = (output - desired_outputs[i]).map{ |x| x.abs }
+      sum_diff = array_diff
+      avg += sum_diff
+      nr += output.size
+    end
+    avg / nr
   end
 
 end
