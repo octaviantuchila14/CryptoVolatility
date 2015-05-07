@@ -13,7 +13,7 @@ class NeuralNetworksController < ApplicationController
   end
 
   # GET /neural_networks/new
-  def new(days)
+  def new
     #@neural_network = NeuralNetwork.new
   end
 

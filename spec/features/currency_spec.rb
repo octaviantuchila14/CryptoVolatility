@@ -3,7 +3,8 @@ require 'rails_helper'
 feature 'User navigates to the home page' do
 
   before :each do
-    FactoryGirl.create(:currency, full_name: 'Bitcoin', name: 'btc')
+    @cr = FactoryGirl.create(:currency, full_name: 'Bitcoin', name: 'btc')
+    @cr.create_neural_network
   end
 
   scenario 'she sees a list of cryptocurrencies' do
@@ -17,6 +18,12 @@ feature 'User navigates to the home page' do
     visit '/'
     click_link 'Show'
     expect(page).to have_content 'btc'
+  end
+
+  scenario 'she sees a drop down and can select a number of days between 1 and 30' do
+    visit '/'
+    click_link 'Show'
+    expect(page).to have_selector
   end
 
 end
