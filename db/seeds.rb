@@ -9,5 +9,5 @@
 currency = Currency.create(name: "btc", full_name: "Bitcoin")
 currency.create_neural_network
 100.times do |i|
-  currency.exchange_rates << ExchangeRate.create(subject: currency.name, date: Date.today - i, last: i)
+  currency.exchange_rates << ExchangeRate.create(subject: currency.name, date: Date.today - i, last: i, ref_cr: "usd")
 end

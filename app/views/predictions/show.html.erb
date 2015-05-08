@@ -9,5 +9,7 @@
   <%= @prediction.average_difference %>
 </p>
 
+<%= line_chart @prediction.exchange_rates.last %>
+
 <%= link_to 'Edit', edit_prediction_path(@prediction) %> |
 <%= link_to 'Back', predictions_path %>

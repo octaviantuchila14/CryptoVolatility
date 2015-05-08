@@ -68,4 +68,9 @@ end
 #neural networks
 gem 'ruby-fann', '~> 1.2.6'
 
+#charts
+gem "chartkick"
+
 #for defining constants
+
+
