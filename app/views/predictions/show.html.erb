@@ -5,7 +5,9 @@
 </p>
 
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
-<%= line_chart @prediction.exchange_rates.group_by_day(:date).count %>
+<% #TODO be careful this sums up all exchange rates in a day!!!!!%>
+<%= @prediction.exchange_rates.size %>
+<%= line_chart @prediction.exchange_rates.group_by_day(:date).sum(:last) %>
 
 <p>
   <strong>Average difference:</strong>

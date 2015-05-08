@@ -12,7 +12,7 @@ class NeuralNetwork < ActiveRecord::Base
   MAX_OUTPUTS = 1
   MSE = 0.0000000001
   ACCEPTABLE_ERROR = 0.01
-  NORMALISATION_CONSTANT = 2000
+  NORMALISATION_CONSTANT = 10000
   TRAINING_DATA_PERCENTAGE = 0.8
 
   self.after_initialize do
@@ -41,14 +41,16 @@ class NeuralNetwork < ActiveRecord::Base
       self.create_prediction
       self.prediction.average_difference = optimise_training(daily_values) * NORMALISATION_CONSTANT
 
-      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map{|dv| dv * NORMALISATION_CONSTANT})
-      (0..predicted_rates.size).each do |i|
+
+      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE)).map{|dv| dv * NORMALISATION_CONSTANT}
+
+      p "there are #{predicted_rates} predicted rates"
+      (0..predicted_rates.size - 1).each do |i|
         #ASS: I'm getting the data for today at the beginning of the day
         self.prediction.exchange_rates << ExchangeRate.new(last: predicted_rates[i], date: Date.today + i + 1, predicted: true)
       end
     end
-
-    prediction
+    self.prediction
   end
 
   #TODO: make it vary the parameters for input layer size, hidden layer size, number of epochs
