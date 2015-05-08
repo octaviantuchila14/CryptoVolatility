@@ -75,13 +75,11 @@ class NeuralNetwork < ActiveRecord::Base
   def validate(inputs, desired_outputs)
     avg = 0.0
     nr = 0
-    p "avg is #{avg.class} "
     (0..inputs.size - 1).each do |i|
       output = @fann.run(inputs[i])
       avg += (output - desired_outputs[i]).map{ |x| x.abs }.reduce(:+)
       nr += output.size
     end
-    p "avg divided by nr is #{avg/nr}"
     avg / nr
   end
 

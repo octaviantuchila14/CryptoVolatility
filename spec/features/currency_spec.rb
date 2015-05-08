@@ -4,7 +4,6 @@ feature 'User navigates to the home page' do
 
   before :each do
     @currency = FactoryGirl.create(:currency, full_name: 'Bitcoin', name: 'btc')
-    @currency.create_neural_network
   end
 
   scenario 'she sees a list of cryptocurrencies' do
@@ -37,6 +36,22 @@ feature 'User navigates to the home page' do
     select '5', :from => 'currency[prediction_days]'
     click_button 'Predict'
     expect(page).to have_content 'Expected values'
+  end
+
+  scenario 'but she can\'t create more than 1 prediction' do
+    (0..100).each do |i|
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i)
+    end
+
+    visit "/currencies/#{@currency.id}"
+    select '5', :from => 'currency[prediction_days]'
+    click_button 'Predict'
+    expect(page).to have_content 'Expected values'
+    visit "/currencies/#{@currency.id}"
+    select '5', :from => 'currency[prediction_days]'
+    click_button 'Predict'
+    expect(page).to have_content 'Expected values'
+    expect(Prediction.all.size).to eq(1)
   end
 
 end

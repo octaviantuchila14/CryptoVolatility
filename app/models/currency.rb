@@ -7,7 +7,9 @@ class Currency < ActiveRecord::Base
 
   self.after_initialize do
     #create a neural network corresponding to the currency
-    create_neural_network
+    if(self.neural_network == nil)
+      create_neural_network
+    end
   end
 
 =begin

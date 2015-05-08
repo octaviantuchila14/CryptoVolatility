@@ -4,12 +4,13 @@
     Expected values:
 </p>
 
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+<%= line_chart @prediction.exchange_rates.last %>
+
 <p>
   <strong>Average difference:</strong>
   <%= @prediction.average_difference %>
 </p>
-
-<%= line_chart @prediction.exchange_rates.last %>
 
 <%= link_to 'Edit', edit_prediction_path(@prediction) %> |
 <%= link_to 'Back', predictions_path %>

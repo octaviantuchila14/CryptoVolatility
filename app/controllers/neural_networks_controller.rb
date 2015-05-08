@@ -14,7 +14,7 @@ class NeuralNetworksController < ApplicationController
 
   # GET /neural_networks/new
   def new
-    #@neural_network = NeuralNetwork.new
+    @neural_network = NeuralNetwork.new
   end
 
   # GET /neural_networks/1/edit
