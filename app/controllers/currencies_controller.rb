@@ -41,15 +41,9 @@ class CurrenciesController < ApplicationController
   # PATCH/PUT /currencies/1
   # PATCH/PUT /currencies/1.json
   def update
-    respond_to do |format|
-      if @currency.update(currency_params)
-        prediction = @currency.neural_network.predict
-        p "getting prediction"
-        redirect_to prediction
-      else
-        format.html { render :edit }
-        format.json { render json: @currency.errors, status: :unprocessable_entity }
-      end
+    if @currency.update(currency_params)
+      prediction = @currency.neural_network.predict
+      redirect_to prediction
     end
   end
 

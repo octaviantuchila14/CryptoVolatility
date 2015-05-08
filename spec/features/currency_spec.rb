@@ -27,9 +27,8 @@ feature 'User navigates to the home page' do
   end
 
   scenario 'she can view a prediction for that number of days' do
-    @currency.create_neural_network
     (0..100).each do |i|
-      FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i)
     end
 
     visit '/'
