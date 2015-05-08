@@ -69,7 +69,10 @@ end
 gem 'ruby-fann', '~> 1.2.6'
 
 #charts
-gem "chartkick"
+gem 'chartkick'
+
+#groups data for charts
+gem 'groupdate'
 
 #for defining constants
 
