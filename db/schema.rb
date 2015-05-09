@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150507185719) do
+ActiveRecord::Schema.define(version: 20150509160022) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20150507185719) do
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
     t.integer  "neural_network_id"
+    t.float    "chi_squared"
   end
 
 end

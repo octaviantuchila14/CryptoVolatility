@@ -6,8 +6,6 @@
 
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 <% #TODO be careful this sums up all exchange rates in a day!!!!!%>
-<%= @prediction.exchange_rates.size %>
-<%= @prediction.exchange_rates.group_by_day(:date).sum(:last) %>
 <%= line_chart @prediction.exchange_rates.group_by_day(:date).sum(:last) %>
 
 <p>

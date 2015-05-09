@@ -36,10 +36,9 @@ class NeuralNetwork < ActiveRecord::Base
       @exchange_rates.each do |er|
         daily_values << (er.last / NORMALISATION_CONSTANT)
       end
-      optimise_training daily_values
 
       self.create_prediction
-      self.prediction.average_difference = optimise_training(daily_values) * NORMALISATION_CONSTANT
+      optimise_training daily_values
 
 
       predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE)).map{|dv| dv * NORMALISATION_CONSTANT}
@@ -79,12 +78,15 @@ class NeuralNetwork < ActiveRecord::Base
   def validate(inputs, desired_outputs)
     avg = 0.0
     nr = 0
+    #chi_sq = 0.0
     (0..inputs.size - 1).each do |i|
       output = @fann.run(inputs[i])
       avg += (output - desired_outputs[i]).map{ |x| x.abs }.reduce(:+)
+      #chi_sq += (output - desired_outputs[i])*(output - desired_outputs[i])/desired_outputs[i]
       nr += output.size
     end
-    avg / nr
+    self.prediction.average_difference = avg / nr * NORMALISATION_CONSTANT
+    #self.prediction.chi_squared = chi_sq
   end
 
 end

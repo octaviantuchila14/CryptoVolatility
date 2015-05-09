@@ -43,7 +43,6 @@ class CurrenciesController < ApplicationController
   def update
     if @currency.update(currency_params)
       prediction = @currency.neural_network.predict
-      p "prediction is #{prediction.id} and has #{prediction.exchange_rates.size} rates"
       redirect_to prediction
     end
   end

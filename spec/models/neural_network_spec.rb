@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe NeuralNetwork, type: :model do
 
   MAX_NR_OF_DAYS = 30
-  ACCEPTED_ERROR = 0.3
+  ACCEPTED_ERROR = 50
 =begin
   #tests training function
   it "can create a f(x) = x function" do
@@ -40,6 +40,19 @@ RSpec.describe NeuralNetwork, type: :model do
 
     prediction = currency.neural_network.predict
     expect(prediction.average_difference).to be > 0
+  end
+
+  it "gives a relatively accurate prediction for models which are predictable" do
+    currency = FactoryGirl.create(:currency)
+    (0..99).each do |i|
+      currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: currency.name, last: i, date: Date.today - i)
+    end
+    prediction = currency.neural_network.predict
+    (100...129).each do |i|
+      p "on day #{i} the exchange rate is #{prediction.exchange_rates[i - 100].last}"
+      expect(prediction.exchange_rates[i - 100].last).to be_between(i - ACCEPTED_ERROR, i + ACCEPTED_ERROR)
+    end
+
   end
 
 end
