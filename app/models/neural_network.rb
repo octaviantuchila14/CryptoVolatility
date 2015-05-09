@@ -44,10 +44,12 @@ class NeuralNetwork < ActiveRecord::Base
 
       predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE)).map{|dv| dv * NORMALISATION_CONSTANT}
 
-      p "there are #{predicted_rates} predicted rates"
       (0..predicted_rates.size - 1).each do |i|
         #ASS: I'm getting the data for today at the beginning of the day
-        self.prediction.exchange_rates << ExchangeRate.new(last: predicted_rates[i], date: Date.today + i + 1, predicted: true)
+        #TODO change from create to new
+        #self.prediction.exchange_rates << ExchangeRate.new(last: predicted_rates[i], date: Date.today + i + 1, predicted: true)
+        self.prediction.exchange_rates.create(subject: @exchange_rates.first.subject, ref_cr: @exchange_rates.first.ref_cr,
+                                              last: predicted_rates[i], date: Date.today + i + 1, predicted: true)
       end
     end
     self.prediction
