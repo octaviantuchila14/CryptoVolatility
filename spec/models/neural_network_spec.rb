@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe NeuralNetwork, type: :model do
 
   MAX_NR_OF_DAYS = 30
-  ACCEPTED_ERROR = 50
+  ACCEPTED_ERROR = 20
 =begin
   #tests training function
   it "can create a f(x) = x function" do

@@ -77,7 +77,6 @@ class NeuralNetwork < ActiveRecord::Base
 
       if(i == 0)
         p inputs[i]
-        p inputs[i].map{ |dv| dv / NORMALISATION_CONSTANT}
         p desired_outputs[i]
         p output
       end
