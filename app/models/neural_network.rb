@@ -21,6 +21,8 @@ class NeuralNetwork < ActiveRecord::Base
 
 
   def train(inputs, desired_outputs)
+    inputs.map{|x| x * NORMALISATION_CONSTANT}
+    desired_outputs.map{|x| x * NORMALISATION_CONSTANT}
     train = RubyFann::TrainData.new(inputs: inputs, desired_outputs: desired_outputs)
     @fann = RubyFann::Standard.new(:num_inputs=>MAX_INPUT_LAYER_SIZE,
                                    :hidden_neurons=>[MAX_HIDDEN_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE], :num_outputs=>self.max_nr_of_days)
@@ -34,14 +36,15 @@ class NeuralNetwork < ActiveRecord::Base
       @exchange_rates.sort_by { |er| er.date}
       daily_values = []
       @exchange_rates.each do |er|
-        daily_values << (er.last / NORMALISATION_CONSTANT)
+        daily_values << (er.last)
       end
 
       self.create_prediction
+
       optimise_training daily_values
 
 
-      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE)).map{|dv| dv * NORMALISATION_CONSTANT}
+      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map{ |dv| dv / NORMALISATION_CONSTANT}).map{|dv| dv * NORMALISATION_CONSTANT}
 
       (0..predicted_rates.size - 1).each do |i|
         #ASS: I'm getting the data for today at the beginning of the day
@@ -78,15 +81,24 @@ class NeuralNetwork < ActiveRecord::Base
   def validate(inputs, desired_outputs)
     avg = 0.0
     nr = 0
-    #chi_sq = 0.0
+    chi_sq = 0.0
     (0..inputs.size - 1).each do |i|
       output = @fann.run(inputs[i])
       avg += (output - desired_outputs[i]).map{ |x| x.abs }.reduce(:+)
-      #chi_sq += (output - desired_outputs[i])*(output - desired_outputs[i])/desired_outputs[i]
       nr += output.size
+
+      chi_sq += compute_chi(output, desired_outputs[i])
     end
-    self.prediction.average_difference = avg / nr * NORMALISATION_CONSTANT
-    #self.prediction.chi_squared = chi_sq
+    self.prediction.average_difference = avg / nr
+    self.prediction.chi_squared = chi_sq
+  end
+
+  def compute_chi(obtained, expected)
+    sum = 0.0
+    (0..obtained.size - 1).each do |i|
+      sum += (obtained[i] - expected[i])/expected[i]
+    end
+    sum
   end
 
 end

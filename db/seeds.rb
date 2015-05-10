@@ -8,5 +8,5 @@
 
 currency = Currency.create(name: "btc", full_name: "Bitcoin")
 100.times do |i|
-  currency.exchange_rates << ExchangeRate.create(subject: currency.name, date: Date.today - i, last: i, ref_cr: "usd")
+  currency.exchange_rates << ExchangeRate.create(subject: currency.name, date: Date.today - i, last: 100 - i, ref_cr: "usd")
 end
