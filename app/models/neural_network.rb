@@ -21,8 +21,8 @@ class NeuralNetwork < ActiveRecord::Base
 
 
   def train(inputs, desired_outputs)
-    inputs.map{|x| x * NORMALISATION_CONSTANT}
-    desired_outputs.map{|x| x * NORMALISATION_CONSTANT}
+    inputs.map{|x| x.map{ |y| y / NORMALISATION_CONSTANT}}
+    desired_outputs.map{|x| x.map{ |y| y / NORMALISATION_CONSTANT}}
     train = RubyFann::TrainData.new(inputs: inputs, desired_outputs: desired_outputs)
     @fann = RubyFann::Standard.new(:num_inputs=>MAX_INPUT_LAYER_SIZE,
                                    :hidden_neurons=>[MAX_HIDDEN_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE], :num_outputs=>self.max_nr_of_days)
@@ -82,13 +82,15 @@ class NeuralNetwork < ActiveRecord::Base
     avg = 0.0
     nr = 0
     chi_sq = 0.0
+    "the size of the inputs is #{inputs.size}"
     (0..inputs.size - 1).each do |i|
-      output = @fann.run(inputs[i])
+      output = @fann.run(inputs[i].map{ |dv| dv / NORMALISATION_CONSTANT}).map{|dv| dv * NORMALISATION_CONSTANT}
       avg += (output - desired_outputs[i]).map{ |x| x.abs }.reduce(:+)
       nr += output.size
 
       chi_sq += compute_chi(output, desired_outputs[i])
     end
+    "the average diff is #{avg/nr}"
     self.prediction.average_difference = avg / nr
     self.prediction.chi_squared = chi_sq
   end
