@@ -19,16 +19,6 @@ class NeuralNetwork < ActiveRecord::Base
     self.max_nr_of_days = 30
   end
 
-
-  def train(inputs, desired_outputs)
-    inputs.map{|x| x.map{ |y| y / NORMALISATION_CONSTANT}}
-    desired_outputs.map{|x| x.map{ |y| y / NORMALISATION_CONSTANT}}
-    train = RubyFann::TrainData.new(inputs: inputs, desired_outputs: desired_outputs)
-    @fann = RubyFann::Standard.new(:num_inputs=>MAX_INPUT_LAYER_SIZE,
-                                   :hidden_neurons=>[MAX_HIDDEN_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE], :num_outputs=>self.max_nr_of_days)
-    @fann.train_on_data(train, MAX_EPOCHS, 0, MSE) # 1000 max_epochs, 10 errors between reports and 0.1 desired MSE (mean-squared-error)
-  end
-
   def predict
     if(self.prediction == nil)
       @exchange_rates = self.currency.exchange_rates
@@ -44,7 +34,7 @@ class NeuralNetwork < ActiveRecord::Base
       optimise_training daily_values
 
 
-      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map{ |dv| dv / NORMALISATION_CONSTANT}).map{|dv| dv * NORMALISATION_CONSTANT}
+      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map!{ |dv| dv / NORMALISATION_CONSTANT}).map!{|dv| dv * NORMALISATION_CONSTANT}
 
       (0..predicted_rates.size - 1).each do |i|
         #ASS: I'm getting the data for today at the beginning of the day
@@ -82,17 +72,43 @@ class NeuralNetwork < ActiveRecord::Base
     avg = 0.0
     nr = 0
     chi_sq = 0.0
-    "the size of the inputs is #{inputs.size}"
     (0..inputs.size - 1).each do |i|
-      output = @fann.run(inputs[i].map{ |dv| dv / NORMALISATION_CONSTANT}).map{|dv| dv * NORMALISATION_CONSTANT}
-      avg += (output - desired_outputs[i]).map{ |x| x.abs }.reduce(:+)
-      nr += output.size
+      output = @fann.run(inputs[i].map!{ |dv| dv / NORMALISATION_CONSTANT}).map!{|dv| dv * NORMALISATION_CONSTANT}
 
+      if(i == 0)
+        p inputs[i]
+        p inputs[i].map{ |dv| dv / NORMALISATION_CONSTANT}
+        p desired_outputs[i]
+        p output
+      end
+
+      avg += (output - desired_outputs[i]).map!{ |x| x.abs }.reduce(:+)
+      nr += output.size
       chi_sq += compute_chi(output, desired_outputs[i])
     end
-    "the average diff is #{avg/nr}"
     self.prediction.average_difference = avg / nr
     self.prediction.chi_squared = chi_sq
+  end
+
+  def train(inputs, desired_outputs)
+    inputs = inputs.map!{|x| x.map!{ |y| y / NORMALISATION_CONSTANT}}
+    desired_outputs.map!{|x| x.map!{ |y| y / NORMALISATION_CONSTANT}}
+
+    inputs.each do |i|
+      i.each do |x|
+        raise "inputs not in bounds, #{x}!"  unless x.between?(0, 1)
+      end
+    end
+    desired_outputs.each do |i|
+      i.each do |x|
+        raise "inputs not in bounds, #{x}!"  unless x.between?(0, 1)
+      end
+    end
+
+    train = RubyFann::TrainData.new(inputs: inputs, desired_outputs: desired_outputs)
+    @fann = RubyFann::Standard.new(:num_inputs=>MAX_INPUT_LAYER_SIZE,
+                                   :hidden_neurons=>[MAX_HIDDEN_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE], :num_outputs=>self.max_nr_of_days)
+    @fann.train_on_data(train, MAX_EPOCHS, 0, MSE) # 1000 max_epochs, 10 errors between reports and 0.1 desired MSE (mean-squared-error)
   end
 
   def compute_chi(obtained, expected)
