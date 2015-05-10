@@ -49,7 +49,6 @@ RSpec.describe NeuralNetwork, type: :model do
     end
     prediction = currency.neural_network.predict
     (100...129).each do |i|
-      p "on day #{i} the exchange rate is #{prediction.exchange_rates[i - 100].last}"
       expect(prediction.exchange_rates[i - 100].last).to be_between(i - ACCEPTED_ERROR, i + ACCEPTED_ERROR)
     end
 

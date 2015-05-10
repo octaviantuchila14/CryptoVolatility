@@ -42,7 +42,13 @@ class CurrenciesController < ApplicationController
   # PATCH/PUT /currencies/1.json
   def update
     if @currency.update(currency_params)
-      prediction = @currency.neural_network.predict
+      prediction = nil
+      if(@currency.prediction_type == :neural_network)
+        prediction = @currency.neural_network.predict
+      elsif(@currency.prediction_type == :capm)
+        prediction = @currency.market.prediction
+      end
+      p "the currency prediction type is #{@currency.prediction_type}"
       redirect_to prediction
     end
   end
