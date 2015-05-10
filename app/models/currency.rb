@@ -4,6 +4,7 @@ class Currency < ActiveRecord::Base
   validates_uniqueness_of :name
   has_one :neural_network, inverse_of: :currency
   has_many :exchange_rates
+  enum prediction_type: [:neural_network, :capm]
 
   self.after_initialize do
     #create a neural network corresponding to the currency

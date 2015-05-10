@@ -10,7 +10,13 @@
     <div id="select_days" >
     <%= f.select(:prediction_days, options_for_select(1..30)) %>
     </div>
+    <%= f.hidden_field :prediction_type, value: :neural_network%>
     <%= f.submit "Predict", class: "btn btn-primary" %>
+<% end %>
+
+<%=form_for @currency do |f| %>
+    <%= f.hidden_field :prediction_type, value: :capm%>
+    <%= f.submit "CAPM previous estimations", class: "btn btn-primary" %>
 <% end %>
 
 <%= link_to 'Edit', edit_currency_path(@currency) %> |
