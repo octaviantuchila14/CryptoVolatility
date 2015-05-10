@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150510132446) do
+ActiveRecord::Schema.define(version: 20150510163111) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20150510132446) do
     t.string   "full_name"
     t.integer  "prediction_days"
     t.integer  "prediction_type"
+    t.integer  "market_id"
   end
 
   create_table "exchange_rates", force: :cascade do |t|
@@ -41,13 +42,9 @@ ActiveRecord::Schema.define(version: 20150510132446) do
     t.integer  "currency_id"
   end
 
-  create_table "financial_models", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "markets", force: :cascade do |t|
     t.string   "name"
+    t.string   "full_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

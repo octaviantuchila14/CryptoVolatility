@@ -5,12 +5,22 @@ class Currency < ActiveRecord::Base
   has_one :neural_network, inverse_of: :currency
   has_many :exchange_rates
   enum prediction_type: [:neural_network, :capm]
+  belongs_to :market
 
   self.after_initialize do
     #create a neural network corresponding to the currency
     if(self.neural_network == nil)
       create_neural_network
     end
+
+    if(self.market == nil)
+      if(Market.all.size == 0)
+        create_market(name: :"^GSPC")
+      else
+        self.market = Market.first
+      end
+    end
+
   end
 
 =begin

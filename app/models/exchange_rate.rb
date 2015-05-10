@@ -5,5 +5,6 @@ class ExchangeRate < ActiveRecord::Base
   validates_presence_of :date
   validates_uniqueness_of :date, scope: :predicted
   belongs_to :currency
+  belongs_to :market
 
 end
