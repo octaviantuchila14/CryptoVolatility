@@ -64,6 +64,7 @@ GEM
     cryptocoincharts_api (0.0.4)
       faraday
       json
+    database_cleaner (1.4.1)
     debug_inspector (0.0.2)
     diff-lcs (1.2.5)
     dirty-memoize (0.0.4)
@@ -236,6 +237,7 @@ DEPENDENCIES
   chartkick
   coffee-rails (~> 4.1.0)
   cryptocoincharts_api
+  database_cleaner
   factory_girl_rails
   groupdate
   jbuilder (~> 2.0)

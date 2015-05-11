@@ -79,6 +79,9 @@ gem 'groupdate'
 #for using postgresql
 gem 'pg'
 
+#for cleaning the database between tests
+gem 'database_cleaner'
+
 #for defining constants
 
 
