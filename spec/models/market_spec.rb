@@ -2,14 +2,14 @@ require 'rails_helper'
 
 RSpec.describe Market, type: :model do
 
-  before :all do
+  before :each do
     @market = FactoryGirl.create(:market)
     @currency = FactoryGirl.create(:currency)
   end
 
   it "evaluates the beta of a currency" do
-    3.times do
-      er = FactoryGirl.create(:exchange_rate, last: 10)
+    3.times do |i|
+      er = FactoryGirl.create(:exchange_rate, last: 10, date: Date.today - i)
       @market.exchange_rates << er
       @currency.exchange_rates << er
     end
@@ -31,8 +31,8 @@ RSpec.describe Market, type: :model do
 =end
 
   it "returns the evaluation of a currency" do
-    3.times do
-      er = FactoryGirl.create(:exchange_rate, last: 10)
+    3.times do |i|
+      er = FactoryGirl.create(:exchange_rate, last: 10, date: Date.today - i)
       @market.exchange_rates << er
       @currency.exchange_rates << er
     end

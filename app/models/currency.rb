@@ -23,6 +23,17 @@ class Currency < ActiveRecord::Base
 
   end
 
+  def get_variation
+    variations = []
+    exchange_rates = self.exchange_rates.where(predicted: false)
+    exchange_rates.each_index do |index|
+      if(index + 1 < exchange_rates.size)
+        variations << (exchange_rates[index + 1].last - exchange_rates[index].last)
+      end
+    end
+    variations
+  end
+
 =begin
   #returns prediction for a number of days after
   def predict(days_after, market, reference_currency)

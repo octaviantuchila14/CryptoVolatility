@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'support/database_cleaner'
 
 feature 'User navigates to the home page' do
 
