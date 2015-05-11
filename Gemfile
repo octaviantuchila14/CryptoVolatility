@@ -58,6 +58,7 @@ gem 'yahoo-finance', require: 'yahoo_finance'
 #getting data statistics
 #gem 'descriptive_statistics', '~> 2.4.0', :require => 'descriptive_statistics/safe'
 gem 'statsample'
+gem 'statsample-bivariate-extension'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'

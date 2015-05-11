@@ -8,7 +8,19 @@ RSpec.describe Currency, type: :model do
       er = FactoryGirl.create(:exchange_rate, last: i, date: Date.today - i)
       cr.exchange_rates << er
     end
-    expect(cr.get_variation).to eq([1, 1])
+    expect(cr.get_variation).to eq([-1, -1])
+  end
+
+  it "returns the differences in its daily prices" do
+    cr = FactoryGirl.create(:currency)
+    er1 = FactoryGirl.create(:exchange_rate, last: 0, date: Date.today - 3)
+    er2 = FactoryGirl.create(:exchange_rate, last: 5, date: Date.today - 2)
+    er3 = FactoryGirl.create(:exchange_rate, last: 20, date: Date.today - 1)
+    cr.exchange_rates << er1
+    cr.exchange_rates << er2
+    cr.exchange_rates << er3
+
+    expect(cr.get_variation).to eq([5, 15])
   end
 =begin
   it "predicts the future evolution of the cryptocurrency" do
