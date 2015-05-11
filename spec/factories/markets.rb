@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :market do
-    name "MyString"
+    name "^GSPC"
     full_name "MyString"
   end
 

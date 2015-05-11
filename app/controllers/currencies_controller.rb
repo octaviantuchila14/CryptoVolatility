@@ -43,12 +43,12 @@ class CurrenciesController < ApplicationController
   def update
     if @currency.update(currency_params)
       prediction = nil
-      if(@currency.prediction_type == :neural_network)
+      if(params[:currency][:prediction_type] == "neural_network")
         prediction = @currency.neural_network.predict
-      elsif(@currency.prediction_type == :capm)
-        prediction = @currency.market.prediction
+      elsif(params[:currency][:prediction_type]  == "capm")
+        prediction = @currency.market.capm_prediction
       end
-      p "the currency prediction type is #{@currency.prediction_type}"
+      p "the currency prediction type is #{params[:currency][:prediction_type] }"
       redirect_to prediction
     end
   end
