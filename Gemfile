@@ -79,6 +79,9 @@ gem 'groupdate'
 #for using postgresql
 gem 'pg'
 
+#for heroku
+gem 'rails_12factor', group: :production
+
 #for defining constants
 
 
