@@ -7,6 +7,11 @@ class Market < ActiveRecord::Base
     #rake query_api:get_market_data
   end
 
+  def get_beta(currency)
+    cr_var = currency.get_variation
+
+  end
+
   def capm_prediction
 
   end

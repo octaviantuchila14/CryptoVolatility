@@ -1,6 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Currency, type: :model do
+
+  it "returns the differences in its daily prices" do
+    cr = FactoryGirl.create(:currency)
+    (1..3).each do
+      er = FactoryGirl.create(:exchange_rate, last: i)
+      cr.exchange_rates << er
+    end
+    expect(cr.get_variation).to eq([1, 1])
+  end
 =begin
   it "predicts the future evolution of the cryptocurrency" do
     expectedRates = []
