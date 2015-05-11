@@ -36,8 +36,8 @@ class Market < ActiveRecord::Base
     end
   end
 
-  def capm_prediction
-
+  def capm_prediction(currency)
+    self.risk_free_rate + get_beta(currency)*(market_expected_return - risk_free_rate)
   end
 
 end

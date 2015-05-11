@@ -22,6 +22,7 @@ RSpec.describe Currency, type: :model do
 
     expect(cr.get_variation).to eq([5, 15])
   end
+
 =begin
   it "predicts the future evolution of the cryptocurrency" do
     expectedRates = []

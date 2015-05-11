@@ -1,3 +1,5 @@
+require 'statsample'
+
 class Currency < ActiveRecord::Base
   validates :name, presence: true
   validates :full_name, presence: true
@@ -33,6 +35,7 @@ class Currency < ActiveRecord::Base
     end
     variations
   end
+
 
 =begin
   #returns prediction for a number of days after
