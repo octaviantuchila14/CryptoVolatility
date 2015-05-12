@@ -27,7 +27,6 @@ ActiveRecord::Schema.define(version: 20150512144751) do
   end
 
   create_table "exchange_rates", force: :cascade do |t|
-    t.time     "time"
     t.float    "last"
     t.float    "high"
     t.float    "low"
@@ -40,6 +39,7 @@ ActiveRecord::Schema.define(version: 20150512144751) do
     t.integer  "prediction_id"
     t.integer  "currency_id"
     t.integer  "market_id"
+    t.datetime "time"
   end
 
   create_table "markets", force: :cascade do |t|

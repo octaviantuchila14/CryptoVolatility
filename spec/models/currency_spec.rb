@@ -5,7 +5,7 @@ RSpec.describe Currency, type: :model do
   it "returns the differences in its daily prices" do
     cr = FactoryGirl.create(:currency)
     3.times do |i|
-      er = FactoryGirl.create(:exchange_rate, last: i, time: Time.now - i*days)
+      er = FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
       cr.exchange_rates << er
     end
     expect(cr.get_variation).to eq([-1, -1])
@@ -13,9 +13,9 @@ RSpec.describe Currency, type: :model do
 
   it "returns the differences in its daily prices" do
     cr = FactoryGirl.create(:currency)
-    er1 = FactoryGirl.create(:exchange_rate, last: 0, time: Time.now - 3*days)
-    er2 = FactoryGirl.create(:exchange_rate, last: 5, time: Time.now - 2*days)
-    er3 = FactoryGirl.create(:exchange_rate, last: 20, time: Time.now - 1*days)
+    er1 = FactoryGirl.create(:exchange_rate, last: 0, time: DateTime.now - 3.days)
+    er2 = FactoryGirl.create(:exchange_rate, last: 5, time: DateTime.now - 2.days)
+    er3 = FactoryGirl.create(:exchange_rate, last: 20, time: DateTime.now - 1.days)
     cr.exchange_rates << er1
     cr.exchange_rates << er2
     cr.exchange_rates << er3

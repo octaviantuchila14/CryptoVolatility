@@ -8,9 +8,9 @@
 <% #TODO be careful this sums up all exchange rates in a day!!!!!%>
 
 <%= "Historic data" %>
-<%= line_chart @prediction.neural_network.currency.exchange_rates.group_by_day(:time).sum(:last) %>
+<%= line_chart @prediction.neural_network.currency.exchange_rates.group_by_minute(:time).sum(:last) %>
 <%= "Predicted data" %>
-<%= line_chart @prediction.exchange_rates.group_by_day(:time).sum(:last) %>
+<%= line_chart @prediction.exchange_rates.group_by_minute(:time).sum(:last) %>
 
 <p>
   <strong>Average difference:</strong>

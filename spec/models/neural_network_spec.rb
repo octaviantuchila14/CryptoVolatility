@@ -35,7 +35,7 @@ RSpec.describe NeuralNetwork, type: :model do
   it "returns a prediction having 30 days" do
     currency = FactoryGirl.create(:currency)
     (0..100).each do |i|
-      currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: currency.name, last: 10*i, time: Time.now - i*days)
+      currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: currency.name, last: 10*i, time: DateTime.now - i.days)
     end
 
     prediction = currency.neural_network.predict
@@ -45,7 +45,7 @@ RSpec.describe NeuralNetwork, type: :model do
   it "gives a relatively accurate prediction for models which are predictable" do
     currency = FactoryGirl.create(:currency)
     (0..99).each do |i|
-      currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: currency.name, last: i, time: Time.now - i*days)
+      currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: currency.name, last: i, time: DateTime.now - i.days)
     end
     prediction = currency.neural_network.predict
     (100...129).each do |i|

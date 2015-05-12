@@ -48,7 +48,6 @@ class CurrenciesController < ApplicationController
       elsif(params[:currency][:prediction_type]  == "capm")
         prediction = @currency.market.capm_prediction
       end
-      p "the currency prediction type is #{params[:currency][:prediction_type] }"
       redirect_to prediction
     end
   end

@@ -8,7 +8,7 @@ class NeuralNetwork < ActiveRecord::Base
   #for now, it predicts only the following day
   MAX_INPUT_LAYER_SIZE = 40
   MAX_HIDDEN_LAYER_SIZE = 50
-  MAX_EPOCHS = 1000
+  MAX_EPOCHS = 50
   MAX_OUTPUTS = 1
   MSE = 0.0000000001
   ACCEPTABLE_ERROR = 0.01
@@ -39,7 +39,7 @@ class NeuralNetwork < ActiveRecord::Base
         #ASS: I'm getting the data for today at the beginning of the day
         #TODO change from create to new
         self.prediction.exchange_rates.create(subject: @exchange_rates.first.subject, ref_cr: @exchange_rates.first.ref_cr,
-                                              last: predicted_rates[i], time: Time.now + (i + 1)*days, predicted: true)
+                                              last: predicted_rates[i], time: DateTime.now + (i + 1).days, predicted: true)
       end
     end
     self.prediction
@@ -72,12 +72,6 @@ class NeuralNetwork < ActiveRecord::Base
     chi_sq = 0.0
     (0..inputs.size - 1).each do |i|
       output = @fann.run(inputs[i].map!{ |dv| dv / NORMALISATION_CONSTANT}).map!{|dv| dv * NORMALISATION_CONSTANT}
-
-      if(i == 0)
-        p inputs[i]
-        p desired_outputs[i]
-        p output
-      end
 
       avg += (output - desired_outputs[i]).map!{ |x| x.abs }.reduce(:+)
       nr += output.size
