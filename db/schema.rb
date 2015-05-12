@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150511191557) do
+ActiveRecord::Schema.define(version: 20150512142910) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20150511191557) do
     t.integer  "neural_network_id"
     t.float    "chi_squared"
     t.integer  "market_id"
+    t.integer  "currency_id"
   end
 
 end
