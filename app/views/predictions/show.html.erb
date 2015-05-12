@@ -7,10 +7,13 @@
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 <% #TODO be careful this sums up all exchange rates in a day!!!!!%>
 
+
 <%= "Historic data" %>
-<%= line_chart @prediction.neural_network.currency.exchange_rates.group_by_minute(:time).sum(:last) %>
-<%= "Predicted data" %>
-<%= line_chart @prediction.exchange_rates.group_by_minute(:time).sum(:last) %>
+<%= line_chart estimates_as_hash(@prediction.neural_network.currency.exchange_rates) %>
+<%= "Predicted data so far" %>
+<%= line_chart estimates_as_hash(@prediction.past_estimates) %>
+<%= "Future estimations" %>
+<%= line_chart estimates_as_hash(@prediction.future_estimates) %>
 
 <p>
   <strong>Average difference:</strong>
