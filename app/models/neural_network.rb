@@ -22,8 +22,7 @@ class NeuralNetwork < ActiveRecord::Base
   def predict
     if(self.prediction == nil)
       @exchange_rates = self.currency.exchange_rates
-      #@exchange_rates = ExchangeRate.where(subject: self.currency.name, date: Date.today - self.max_nr_of_days..Date.today)
-      @exchange_rates.sort_by { |er| er.date}
+      @exchange_rates.sort_by { |er| er.time}
       daily_values = []
       @exchange_rates.each do |er|
         daily_values << (er.last)
@@ -39,9 +38,8 @@ class NeuralNetwork < ActiveRecord::Base
       (0..predicted_rates.size - 1).each do |i|
         #ASS: I'm getting the data for today at the beginning of the day
         #TODO change from create to new
-        #self.prediction.exchange_rates << ExchangeRate.new(last: predicted_rates[i], date: Date.today + i + 1, predicted: true)
         self.prediction.exchange_rates.create(subject: @exchange_rates.first.subject, ref_cr: @exchange_rates.first.ref_cr,
-                                              last: predicted_rates[i], date: Date.today + i + 1, predicted: true)
+                                              last: predicted_rates[i], time: Time.now + (i + 1)*days, predicted: true)
       end
     end
     self.prediction

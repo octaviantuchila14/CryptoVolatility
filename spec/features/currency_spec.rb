@@ -27,7 +27,7 @@ feature 'User navigates to the home page' do
 
   scenario 'she can view a prediction for that number of days' do
     (0..100).each do |i|
-      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, time: Time.now - i*days)
     end
 
     visit '/'
@@ -40,7 +40,7 @@ feature 'User navigates to the home page' do
 
   scenario 'but she can\'t create more than 1 prediction' do
     (0..100).each do |i|
-      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, time: Time.now - i*days)
     end
 
     visit "/currencies/#{@currency.id}"
@@ -56,7 +56,7 @@ feature 'User navigates to the home page' do
 
   scenario 'she can ask for a prediction of type CAPM' do
     (0..100).each do |i|
-      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, time: Time.now - i*days)
     end
 
     visit '/'
@@ -68,7 +68,7 @@ feature 'User navigates to the home page' do
 
   scenario 'she sees a prediction updated as time passes' do
     (0..100).each do |i|
-      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, time: Time.now - i*days)
     end
     visit "/currencies/#{@currency.id}"
     select '5', :from => 'currency[prediction_days]'
@@ -81,7 +81,7 @@ feature 'User navigates to the home page' do
 
     #change date of the last estimation &
     #see if it is in the past estimates array
-    pred_first.date -= 30*minutes
+    pred_first.time -= 30*minutes
 
     #the currency's prediction was updated as soon as the new exchange rate was added
     expect(@currency.prediction.future_estimates.size).to eq(future_size - 1)

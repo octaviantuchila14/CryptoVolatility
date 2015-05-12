@@ -3,6 +3,6 @@ FactoryGirl.define do
     subject 'btc'
     last 0
     ref_cr 'usd'
-    date Date.today
+    time Time.now
   end
 end

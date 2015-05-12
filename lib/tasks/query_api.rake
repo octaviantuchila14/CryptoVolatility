@@ -15,7 +15,6 @@ namespace :query_api do
     exchange_rate = ExchangeRate.new
     exchange_rate.subject = 'btc'
     exchange_rate.ref_cr = 'usd'
-    exchange_rate.date = Date.today
     exchange_rate.time = Time.now
 
     p exchange_rate.date
@@ -24,9 +23,7 @@ namespace :query_api do
       exchange_rate.volume = elem[:volume_first]
     end
 
-    #check if I don't have rate already
-    #if ExchangeRate.where(date: exchange_rate.date, time: exchange_rate.time).blank?
-    if ExchangeRate.where(date: exchange_rate.date).blank?
+    if ExchangeRate.where(time: exchange_rate.time, predicted: false, subject: exchange_rate.subject).blank?
       exchange_rate.save
     end
 
@@ -43,12 +40,11 @@ namespace :query_api do
       exchange_rate = ExchangeRate.new
       exchange_rate.subject = "^GSPC"
       exchange_rate.ref_cr = 'usd'
-      exchange_rate.date = daily_data[:start_date]
       exchange_rate.last = daily_data[:close]
       exchange_rate.time = Time.now
 
       #check if I don't have rate already
-      if ExchangeRate.where(date: exchange_rate.date).blank?
+      if ExchangeRate.where(time: exchange_rate.time, predicted: false, subject: exchange_rate.subject).blank?
         exchange_rate.save
       end
 

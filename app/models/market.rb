@@ -11,7 +11,7 @@ class Market < ActiveRecord::Base
 
   def get_variation(size)
     variations = []
-    exchange_rates = self.exchange_rates.where(predicted: false).sort_by{|er| er.date}.last(size)
+    exchange_rates = self.exchange_rates.where(predicted: false).sort_by{|er| er.time}.last(size)
     exchange_rates.each_index do |index|
       if(index + 1 < exchange_rates.size)
         variations << (exchange_rates[index + 1].last - exchange_rates[index].last)
