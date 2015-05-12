@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="38975478-c51d-4fe1-b0cf-2cb40fc23ac9" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/currency.rb" afterPath="$PROJECT_DIR$/app/models/currency.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/features/currency_spec.rb" afterPath="$PROJECT_DIR$/spec/features/currency_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/prediction.rb" afterPath="$PROJECT_DIR$/app/models/prediction.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/schema.rb" afterPath="$PROJECT_DIR$/db/schema.rb" />
     </list>
     <ignored path="IndividualProject.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,8 +27,8 @@
       <file leaf-file-name="currency_spec.rb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/spec/features/currency_spec.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.36773255">
-              <caret line="68" column="57" selection-start-line="68" selection-start-column="57" selection-end-line="68" selection-end-column="57" />
+            <state vertical-scroll-proportion="0.7383721">
+              <caret line="86" column="76" selection-start-line="86" selection-start-column="76" selection-end-line="86" selection-end-column="76" />
               <folding />
             </state>
           </provider>
@@ -1140,8 +1137,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/spec/features/currency_spec.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.36773255">
-          <caret line="68" column="57" selection-start-line="68" selection-start-column="57" selection-end-line="68" selection-end-column="57" />
+        <state vertical-scroll-proportion="0.7383721">
+          <caret line="86" column="76" selection-start-line="86" selection-start-column="76" selection-end-line="86" selection-end-column="76" />
           <folding />
         </state>
       </provider>
