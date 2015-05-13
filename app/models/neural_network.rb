@@ -6,7 +6,6 @@ class NeuralNetwork < ActiveRecord::Base
   has_one :prediction
 
   #for now, it predicts only the following day
-  MAX_INPUT_LAYER_SIZE = 40
   MAX_HIDDEN_LAYER_SIZE = 50
   MAX_EPOCHS = 50
   MAX_OUTPUTS = 1
@@ -125,5 +124,28 @@ class NeuralNetwork < ActiveRecord::Base
     end
     exchange_rates
   end
+
+  def separate_inputs(data)
+    inputs = []
+    (0..data.size - MAX_INPUT_LAYER_SIZE).each do |i|
+      inputs << []
+      (0..MAX_INPUT_LAYER_SIZE - 1).each do |j|
+        inputs[i] << (data[i + j])
+      end
+    end
+    inputs
+  end
+
+  def separate_outputs(data)
+    inputs = []
+    (MAX_INPUT_LAYER_SIZE..data.size - MAX_OUTPUT_LAYER_SIZE).each do |i|
+      inputs << []
+      (0..MAX_INPUT_LAYER_SIZE - 1).each do |j|
+        inputs[i] << (data[i + j])
+      end
+    end
+    inputs
+  end
+
 
 end

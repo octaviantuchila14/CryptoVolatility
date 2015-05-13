@@ -38,7 +38,7 @@ RSpec.describe NeuralNetwork, type: :model do
       currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: currency.name, last: 10*i, time: DateTime.now - i.days)
     end
 
-    prediction = currency.neural_network.predict
+    prediction = currency.@neural_network.predict
     expect(prediction.average_difference).to be > 0
   end
 
@@ -47,13 +47,17 @@ RSpec.describe NeuralNetwork, type: :model do
     (0..99).each do |i|
       currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: currency.name, last: i, time: DateTime.now - i.days)
     end
-    prediction = currency.neural_network.predict
+    prediction = currency.@neural_network.predict
     (100...129).each do |i|
       expect(prediction.exchange_rates[i - 100].last).to be_between(i - ACCEPTED_ERROR, i + ACCEPTED_ERROR)
     end
 
   end
 =end
+
+  before(:each) do
+    @neural_network = NeuralNetwork.create
+  end
 
 
   it "transforms exchange rates into normalized data" do
@@ -63,8 +67,7 @@ RSpec.describe NeuralNetwork, type: :model do
     end
     exchange_rates.sort_by!{|er| er.time}
 
-    neural_network = NeuralNetwork.create
-    normalized_data = neural_network.normalize(exchange_rates)
+    normalized_data = @neural_network.normalize(exchange_rates)
 
     expect(normalized_data.size).to eq(exchange_rates.size)
     exchange_rates.each_index do |i|
@@ -78,8 +81,7 @@ RSpec.describe NeuralNetwork, type: :model do
       normalized_data << i / NORMALIZATION_CONSTANT
     end
 
-    neural_network = NeuralNetwork.create
-    exchange_rates = neural_network.denormalize(normalized_data)
+    exchange_rates = @neural_network.denormalize(normalized_data)
 
     expect(normalized_data.size).to eq(exchange_rates.size)
     exchange_rates.each_index do |i|
@@ -89,5 +91,43 @@ RSpec.describe NeuralNetwork, type: :model do
       end
     end
   end
+
+  it "cuts data into an array of inputs and outputs" do
+    normalized_data = []
+    (0..99).each do |i|
+      normalized_data << i / NORMALIZATION_CONSTANT
+    end
+
+    input = @neural_network.separate_inputs(normalized_data)
+    expect(input.size).to eq(normalized_data.size - MAX_INPUT_LAYER_SIZE + 1)
+    input.each_index do |i|
+      expect(input[i].size).to eq(MAX_INPUT_LAYER_SIZE)
+      input[i].each_index do |j|
+        expect(input[i][j]).to eq(normalized_data[i + j])
+      end
+    end
+
+    output = @neural_network.separate_outputs(normalized_data)
+    expect(output.size).to eq(normalized_data.size - MAX_INPUT_LAYER_SIZE + 1)
+    output.each_index do |i|
+      expect(output[i].size).to eq(MAX_OUTPUT_LAYER_SIZE)
+      output[i].each_index do |j|
+        expect(output[i][j]).to eq(normalized_data[MAX_INPUT_LAYER_SIZE + i + j])
+      end
+    end
+  end
+
+=begin
+  it "trains a neural network which outputs predictions for MAX_PREDICTION_DAYS" do
+    exchange_rates = []
+    (0..MAX_@neural_network_INPUTS).each do |i|
+      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
+    end
+    exchange_rates.sort_by!{|er| er.time}
+
+    @neural_network = NeuralNetwork.create
+    @neural_network.train(exchange_rates)
+    end
+=end
 
 end
