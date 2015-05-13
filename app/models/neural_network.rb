@@ -12,7 +12,6 @@ class NeuralNetwork < ActiveRecord::Base
   MAX_OUTPUTS = 1
   MSE = 0.0000000001
   ACCEPTABLE_ERROR = 0.01
-  NORMALISATION_CONSTANT = 10000
   TRAINING_DATA_PERCENTAGE = 0.8
 
   self.after_initialize do
@@ -33,7 +32,7 @@ class NeuralNetwork < ActiveRecord::Base
       optimise_training daily_values
 
 
-      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map!{ |dv| dv / NORMALISATION_CONSTANT}).map!{|dv| dv * NORMALISATION_CONSTANT}
+      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map!{ |dv| dv / NORMALIZATION_CONSTANT}).map!{|dv| dv * NORMALIZATION_CONSTANT}
 
       (0..predicted_rates.size - 1).each do |i|
         #ASS: I'm getting the data for today at the beginning of the day
@@ -71,7 +70,7 @@ class NeuralNetwork < ActiveRecord::Base
     nr = 0
     chi_sq = 0.0
     (0..inputs.size - 1).each do |i|
-      output = @fann.run(inputs[i].map!{ |dv| dv / NORMALISATION_CONSTANT}).map!{|dv| dv * NORMALISATION_CONSTANT}
+      output = @fann.run(inputs[i].map!{ |dv| dv / NORMALIZATION_CONSTANT}).map!{|dv| dv * NORMALIZATION_CONSTANT}
 
       avg += (output - desired_outputs[i]).map!{ |x| x.abs }.reduce(:+)
       nr += output.size
@@ -82,8 +81,8 @@ class NeuralNetwork < ActiveRecord::Base
   end
 
   def train(inputs, desired_outputs)
-    inputs = inputs.map!{|x| x.map!{ |y| y / NORMALISATION_CONSTANT}}
-    desired_outputs.map!{|x| x.map!{ |y| y / NORMALISATION_CONSTANT}}
+    inputs = inputs.map!{|x| x.map!{ |y| y / NORMALIZATION_CONSTANT}}
+    desired_outputs.map!{|x| x.map!{ |y| y / NORMALIZATION_CONSTANT}}
 
     inputs.each do |i|
       i.each do |x|
@@ -108,6 +107,23 @@ class NeuralNetwork < ActiveRecord::Base
       sum += (obtained[i] - expected[i])/expected[i]
     end
     sum
+  end
+
+  def normalize(exchange_rates)
+    exchange_rates.sort_by!{ |er| er.time }
+    normalized_data = []
+    exchange_rates.each do |er|
+      normalized_data << (er.last/NORMALIZATION_CONSTANT)
+    end
+    normalized_data
+  end
+
+  def denormalize(normalized_data)
+    exchange_rates = []
+    normalized_data.each_index do |i|
+      exchange_rates << ExchangeRate.new(time: DateTime.now + i.days, last: normalized_data[i]*NORMALIZATION_CONSTANT)
+    end
+    exchange_rates
   end
 
 end

@@ -70,6 +70,7 @@ end
 
 #neural networks
 gem 'ruby-fann', '~> 1.2.6'
+gem 'ai4r'
 
 #charts
 gem 'chartkick'

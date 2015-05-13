@@ -31,7 +31,7 @@ RSpec.describe NeuralNetwork, type: :model do
     expect((nn.give_result(v_returns))[0] - v_expected_return[0]).to be < ACCEPTED_ERROR
   end
 =end
-
+=begin
   it "returns a prediction having 30 days" do
     currency = FactoryGirl.create(:currency)
     (0..100).each do |i|
@@ -52,6 +52,42 @@ RSpec.describe NeuralNetwork, type: :model do
       expect(prediction.exchange_rates[i - 100].last).to be_between(i - ACCEPTED_ERROR, i + ACCEPTED_ERROR)
     end
 
+  end
+=end
+
+
+  it "transforms exchange rates into normalized data" do
+    exchange_rates = []
+    (0..9).each do |i|
+      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
+    end
+    exchange_rates.sort_by!{|er| er.time}
+
+    neural_network = NeuralNetwork.create
+    normalized_data = neural_network.normalize(exchange_rates)
+
+    expect(normalized_data.size).to eq(exchange_rates.size)
+    exchange_rates.each_index do |i|
+      expect(normalized_data[i] * NORMALIZATION_CONSTANT).to eq(exchange_rates[i].last)
+    end
+  end
+
+  it "transforms normalized data into exchange rates" do
+    normalized_data = []
+    (0..9).each do |i|
+      normalized_data << i / NORMALIZATION_CONSTANT
+    end
+
+    neural_network = NeuralNetwork.create
+    exchange_rates = neural_network.denormalize(normalized_data)
+
+    expect(normalized_data.size).to eq(exchange_rates.size)
+    exchange_rates.each_index do |i|
+      expect(normalized_data[i] * NORMALIZATION_CONSTANT).to eq(exchange_rates[i].last)
+      if(i + 1 < exchange_rates.size)
+        expect(exchange_rates[i].time.day).to eq(exchange_rates[i + 1].time.day - 1)
+      end
+    end
   end
 
 end
