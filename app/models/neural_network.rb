@@ -2,7 +2,7 @@ require 'ruby-fann'
 
 class NeuralNetwork < ActiveRecord::Base
 
-  belongs_to :currency, inverse_of: :neural_network
+  belongs_to :predictable, polymorphic: true
   has_one :prediction
 
   #for now, it predicts only the following day
@@ -19,7 +19,7 @@ class NeuralNetwork < ActiveRecord::Base
 
   def predict
     if(self.prediction == nil)
-      @exchange_rates = self.currency.exchange_rates
+      @exchange_rates = self.predictable.exchange_rates
       @exchange_rates.sort_by { |er| er.time}
       daily_values = []
       @exchange_rates.each do |er|
@@ -75,8 +75,8 @@ class NeuralNetwork < ActiveRecord::Base
       nr += output.size
       chi_sq += compute_chi(output, desired_outputs[i])
     end
-    self.prediction.average_difference = avg / nr
-    self.prediction.chi_squared = chi_sq
+    self.prediction.last_ad = avg / nr
+    self.prediction.last_chisq = chi_sq
   end
 
   def train(inputs, desired_outputs)
@@ -145,6 +145,28 @@ class NeuralNetwork < ActiveRecord::Base
       end
     end
     outputs
+  end
+
+  def train_network(inputs, desired_outputs)
+    train = RubyFann::TrainData.new(inputs: inputs, desired_outputs: desired_outputs)
+    @fann = RubyFann::Standard.new(num_inputs: MAX_INPUT_LAYER_SIZE,
+                                  hidden_neurons: [MAX_HIDDEN_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE],
+                                  num_outputs: MAX_OUTPUT_LAYER_SIZE)
+    @fann.train_on_data(train, MAX_ITERATIONS, 0, MSE)
+
+=begin
+    @fann = Ai4r::NeuralNetwork::Backpropagation.new([MAX_INPUT_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE, MAX_OUTPUT_LAYER_SIZE])
+
+    # Train the network
+    inputs.size.times do |i|
+      @fann.train(inputs[i], desired_outputs[i])
+      end
+=end
+  end
+
+  #for testing
+  def get_network
+    @fann
   end
 
 

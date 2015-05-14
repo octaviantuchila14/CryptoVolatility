@@ -9,7 +9,7 @@
 
 
 <%= "Historic data" %>
-<%= line_chart estimates_as_hash(@prediction.neural_network.currency.exchange_rates) %>
+<%= line_chart estimates_as_hash(@prediction.predictable.exchange_rates) %>
 <%= "Predicted data so far" %>
 <%= line_chart estimates_as_hash(@prediction.past_estimates) %>
 <%= "Future estimations" %>
@@ -17,11 +17,9 @@
 
 <p>
   <strong>Average difference:</strong>
-  <%= @prediction.average_difference %>
 </p>
 <p>
   <strong>Chi squared</strong>
-  <%= @prediction.chi_squared %>
 </p>
 
 <%= link_to 'Edit', edit_prediction_path(@prediction) %> |

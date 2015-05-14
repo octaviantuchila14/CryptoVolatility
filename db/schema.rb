@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150512144751) do
+ActiveRecord::Schema.define(version: 20150514161014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,18 +57,21 @@ ActiveRecord::Schema.define(version: 20150512144751) do
     t.integer  "input_layer_size"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
-    t.integer  "currency_id"
     t.integer  "max_nr_of_days"
+    t.integer  "predictable_id"
+    t.string   "predictable_type"
   end
 
   create_table "predictions", force: :cascade do |t|
-    t.float    "average_difference"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.float    "last_ad"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
     t.integer  "neural_network_id"
-    t.float    "chi_squared"
-    t.integer  "market_id"
-    t.integer  "currency_id"
+    t.float    "last_chisq"
+    t.float    "first_ad"
+    t.float    "first_chisq"
+    t.integer  "predictable_id"
+    t.string   "predictable_type"
   end
 
 end

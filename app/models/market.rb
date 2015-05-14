@@ -2,7 +2,8 @@ require 'statsample'
 
 class Market < ActiveRecord::Base
   has_many :exchange_rates
-  has_many :predictions
+  has_one :neural_network, as: :predictable
+  has_one :prediction, as: :predictable
 
   self.after_initialize do
     #get quotes for american market

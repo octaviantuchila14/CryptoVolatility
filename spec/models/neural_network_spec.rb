@@ -117,17 +117,39 @@ RSpec.describe NeuralNetwork, type: :model do
     end
   end
 
-=begin
-  it "trains a neural network which outputs predictions for MAX_PREDICTION_DAYS" do
-    exchange_rates = []
-    (0..MAX_@neural_network_INPUTS).each do |i|
-      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
-    end
-    exchange_rates.sort_by!{|er| er.time}
 
-    @neural_network = NeuralNetwork.create
-    @neural_network.train(exchange_rates)
+  it "trains a neural network which outputs predictions for MAX_PREDICTION_DAYS" do
+    normalized_data = []
+    (0..99).each do |i|
+      normalized_data << i.to_f / NORMALIZATION_CONSTANT
     end
-=end
+
+    input = @neural_network.separate_inputs(normalized_data)
+    output = @neural_network.separate_outputs(normalized_data)
+
+    fann = @neural_network.get_network
+    expect(fann).to eq(nil)
+    @neural_network.train_network(input, output)
+    fann = @neural_network.get_network
+    expect(fann).to_not eq(nil)
+
+    verify_input = []
+    (0..MAX_INPUT_LAYER_SIZE - 1).each do |i|
+      verify_input <<  i.to_f/ NORMALIZATION_CONSTANT
+    end
+    verify_output = fann.run(verify_input)
+
+    #p "inputs are #{verify_input}"
+    #p "outputs are #{verify_output}"
+    (MAX_INPUT_LAYER_SIZE..MAX_INPUT_LAYER_SIZE + MAX_OUTPUT_LAYER_SIZE - 1).each do |i|
+      expect(verify_output[i - MAX_INPUT_LAYER_SIZE]).to be_between((i - ACCEPTABLE_RATE_VARIATION)/NORMALIZATION_CONSTANT,
+                                                                    (i + ACCEPTABLE_RATE_VARIATION)/NORMALIZATION_CONSTANT);
+    end
+
+  end
+
+  it "verifies the accuracy of the neural network, measuring with avergae difference and average last_chisq" do
+
+  end
 
 end

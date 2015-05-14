@@ -4,8 +4,8 @@ class Currency < ActiveRecord::Base
   validates :name, presence: true
   validates :full_name, presence: true
   validates_uniqueness_of :name
-  has_one :neural_network, inverse_of: :currency
-  has_one :prediction
+  has_one :neural_network, as: :predictable
+  has_one :prediction, as: :predictable
   has_many :exchange_rates
   belongs_to :market
 
