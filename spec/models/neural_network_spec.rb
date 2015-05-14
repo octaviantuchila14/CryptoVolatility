@@ -4,56 +4,6 @@ RSpec.describe NeuralNetwork, type: :model do
 
   MAX_NR_OF_DAYS = 30
   ACCEPTED_ERROR = 20
-=begin
-  #tests training function
-  it "can create a f(x) = x function" do
-
-    nn = NeuralNetwork.new
-    returns = [[0.1, 0.1, 0.1]]
-    expected_returns = [[0.2]]
-    nn.train(returns, expected_returns)
-
-    v_returns = [0.1, 0.1, 0.1]
-    v_expected_return = [0.2]
-    expect((nn.give_result(v_returns))[0] - v_expected_return[0]).to be < ACCEPTED_ERROR
-  end
-
-  #tests training function
-  it "can create a f(x) = x function with more examples" do
-
-    nn = NeuralNetwork.new
-    returns = [[0.2, 0.2, 0.2], [0.25, 0.25, 0.25], [0.3, 0.3, 0.3], [0.35, 0.35, 0.35], [0.4, 0.4, 0.4], [0.5, 0.5, 0.5]]
-    expected_returns = [[0.4], [0.5], [0.6], [0.7], [0.8], [1.0]]
-    nn.train(returns, expected_returns)
-
-    v_returns = [0.2, 0.2, 0.2]
-    v_expected_return = [0.4]
-    expect((nn.give_result(v_returns))[0] - v_expected_return[0]).to be < ACCEPTED_ERROR
-  end
-=end
-=begin
-  it "returns a prediction having 30 days" do
-    currency = FactoryGirl.create(:currency)
-    (0..100).each do |i|
-      currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: currency.name, last: 10*i, time: DateTime.now - i.days)
-    end
-
-    prediction = currency.@neural_network.predict
-    expect(prediction.average_difference).to be > 0
-  end
-
-  it "gives a relatively accurate prediction for models which are predictable" do
-    currency = FactoryGirl.create(:currency)
-    (0..99).each do |i|
-      currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: currency.name, last: i, time: DateTime.now - i.days)
-    end
-    prediction = currency.@neural_network.predict
-    (100...129).each do |i|
-      expect(prediction.exchange_rates[i - 100].last).to be_between(i - ACCEPTED_ERROR, i + ACCEPTED_ERROR)
-    end
-
-  end
-=end
 
   before(:each) do
     @neural_network = NeuralNetwork.create
@@ -148,8 +98,19 @@ RSpec.describe NeuralNetwork, type: :model do
 
   end
 
-  it "verifies the accuracy of the neural network, measuring with avergae difference and average last_chisq" do
+  it "creates or updates a prediction" do
+    exchange_rates = []
+    (0..99).each do |i|
+      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
+    end
+    prediction = @neural_network.predict(exchange_rates)
+    expect(prediction).to_not be(nil)
 
+    #check that the number of exchange rates within the prediction is equal to the total number of tests
+    #multiplied by the validation constant
+    #don't check for the dates of the exchange rates because they may be shuffled randomly
+    expect(prediction.exchange_rates.where("predicted = ? && time < ?", true, DateTime.now.size).size).to
+    eq((exchange_rates.size - MAX_INPUT_LAYER_SIZE - MAX_OUTPUT_LAYER_SIZE + 1)*(1-TRAINING_RATIO))
   end
 
 end

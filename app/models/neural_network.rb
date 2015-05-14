@@ -164,6 +164,10 @@ class NeuralNetwork < ActiveRecord::Base
 =end
   end
 
+  def predict(exchange_rates)
+    prediction
+  end
+
   #for testing
   def get_network
     @fann

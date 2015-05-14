@@ -18,6 +18,7 @@ RSpec.describe Prediction, type: :model do
   it "computes the average difference and chi squared for its predicted exchange rates" do
     prediction = FactoryGirl.create(:prediction)
     currency = FactoryGirl.create(:currency)
+    prediction.predictable = currency
 
     #create 3 estimations and expect the values returned to be for the first and the last
     real, pred1, pred2, pred3 = [], [], [], []
@@ -36,6 +37,25 @@ RSpec.describe Prediction, type: :model do
     expect(prediction.first_chisq).to eq(1.51107)
     expect(prediction.last_ad).to eq(3)
     expect(prediction.last_chisq).to eq(4.53321)
+  end
+
+
+  it "has correct formulas for average and chi_squared" do
+    currency = FactoryGirl.create(:currency)
+    currency.exchange_rates << FactoryGirl.create(:exchange_rate, time: DateTime.now - 1.days, last: 1)
+
+    prediction = FactoryGirl.create(:prediction)
+    prediction.predictable = currency
+
+    rem_f, rem_l = [], []
+    rem_f << FactoryGirl.create(:exchange_rate, time: DateTime.now - 1.days, last: 3)
+    rem_l << FactoryGirl.create(:exchange_rate, time: DateTime.now - 1.days, last: 4)
+
+    prediction.update_stats(rem_f, rem_l)
+    expect(prediction.last_ad).to eq(2)
+    expect(prediction.last_chisq).to eq(4/3)
+    expect(prediction.last_ad).to eq(3)
+    expect(prediction.last_ad).to eq(9/4)
   end
 
 end

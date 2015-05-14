@@ -11,9 +11,80 @@ class Prediction < ActiveRecord::Base
     self.exchange_rates.where("time > ? AND predicted = ? ", DateTime.now, true)
   end
 
-  def update_estimation
-    @first_estimation
-    @last_estimation
+  def update_estimation(estimations)
+    date = date_valid
+
+    #remove estimations which are before today, at hour
+    #keep removed items for statistics
+    rem_f, rem_l = [], []
+    @first_estimation.each do |fe|
+      if(est.time.day < date)
+        @first_estimation >> fe
+        rem_f << fe
+      end
+    end
+    @last_estimation.each do |le|
+      if est.time.day < date
+        @last_estimation >> le
+        rem_l << le
+      end
+    end
+
+    estimations.foreach do |e|
+      fe = @first_estimation.where("time.day == ?", date)
+      if(fe == nil)
+        @first_estimation << e
+      end
+      le = @last_estimation.where("time.day == ?", date)
+      if(le != nil)
+        @last_estimation >> le
+      end
+      @last_estimation << e
+    end
+
+    update_stats(rem_f, rem_l)
+
+  end
+
+  def date_valid
+    date = Date.today
+    if(Time.now.hour >= HOUR)
+      date += 1.day
+    end
+    #the date returned does not have the current time
+    date
+  end
+
+  def update_stats(rem_f, rem_l)
+
+    existing_size = self.exchange_rates.where("time < ?", date_valid).count
+    if(rem_f.size > 0)
+      nr = 0
+      sum_delta = 0.0
+      chi_sq = 0.0
+      rem_f.each do |pred|
+        actual = self.predictable.exchange_rates.where("time.day == ?", pred.time)
+        sum_delta += (pred.last - actual.last)
+        chi_sq += (pred.last - actual.last)*(pred.last - actual.last)/pred.last
+        nr = nr + 1
+      end
+      self.last_ad = (self.last_ad*existing_size + sum_delta* nr)/(existing_size + nr)
+      self.last_chisq = (self.last_ad*existing_size + chi_sq* nr)/(existing_size + nr)
+    end
+
+    if(rem_l.size > 0)
+      nr = 0
+      sum_delta = 0.0
+      chi_sq = 0.0
+      rem_l.each do |pred|
+        actual = self.predictable.exchange_rates.where("time.day == ?", pred.time)
+        sum_delta += (pred.last - actual.last)
+        chi_sq += (pred.last - actual.last)*(pred.last - actual.last)/pred.last
+        nr = nr + 1
+      end
+      self.first_ad = (self.first_ad*existing_size + sum_delta* nr)/(existing_size + nr)
+      self.first_chisq = (self.first_ad*existing_size + chi_sq* nr)/(existing_size + nr)
+    end
   end
 
 end
