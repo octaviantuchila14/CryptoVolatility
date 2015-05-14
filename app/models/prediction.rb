@@ -63,7 +63,7 @@ class Prediction < ActiveRecord::Base
       sum_delta = 0.0
       chi_sq = 0.0
       rem_f.each do |pred|
-        actual = self.predictable.exchange_rates.where("time.day == ?", pred.time)
+        actual = self.predictable.exchange_rates.where("time == ?", pred.time)
         sum_delta += (pred.last - actual.last)
         chi_sq += (pred.last - actual.last)*(pred.last - actual.last)/pred.last
         nr = nr + 1
@@ -77,7 +77,7 @@ class Prediction < ActiveRecord::Base
       sum_delta = 0.0
       chi_sq = 0.0
       rem_l.each do |pred|
-        actual = self.predictable.exchange_rates.where("time.day == ?", pred.time)
+        actual = self.predictable.exchange_rates.where("time == ?", pred.time)
         sum_delta += (pred.last - actual.last)
         chi_sq += (pred.last - actual.last)*(pred.last - actual.last)/pred.last
         nr = nr + 1

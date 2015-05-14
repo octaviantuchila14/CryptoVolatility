@@ -41,6 +41,7 @@ RSpec.describe Prediction, type: :model do
 
 
   it "has correct formulas for average and chi_squared" do
+    p "the datetime from 1 day ago is #{DateTime.now - 1.days}"
     currency = FactoryGirl.create(:currency)
     currency.exchange_rates << FactoryGirl.create(:exchange_rate, time: DateTime.now - 1.days, last: 1)
 
