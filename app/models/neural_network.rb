@@ -127,24 +127,24 @@ class NeuralNetwork < ActiveRecord::Base
 
   def separate_inputs(data)
     inputs = []
-    (0..data.size - MAX_INPUT_LAYER_SIZE).each do |i|
+    (0..data.size - MAX_INPUT_LAYER_SIZE - MAX_OUTPUT_LAYER_SIZE).each do |i|
       inputs << []
       (0..MAX_INPUT_LAYER_SIZE - 1).each do |j|
-        inputs[i] << (data[i + j])
+        inputs[i] << data[i + j]
       end
     end
     inputs
   end
 
   def separate_outputs(data)
-    inputs = []
+    outputs = []
     (MAX_INPUT_LAYER_SIZE..data.size - MAX_OUTPUT_LAYER_SIZE).each do |i|
-      inputs << []
-      (0..MAX_INPUT_LAYER_SIZE - 1).each do |j|
-        inputs[i] << (data[i + j])
+      outputs << []
+      (0..MAX_OUTPUT_LAYER_SIZE - 1).each do |j|
+        outputs[i - MAX_INPUT_LAYER_SIZE] << data[i + j]
       end
     end
-    inputs
+    outputs
   end
 
 

@@ -99,7 +99,7 @@ RSpec.describe NeuralNetwork, type: :model do
     end
 
     input = @neural_network.separate_inputs(normalized_data)
-    expect(input.size).to eq(normalized_data.size - MAX_INPUT_LAYER_SIZE + 1)
+    expect(input.size).to eq(normalized_data.size - MAX_INPUT_LAYER_SIZE - MAX_OUTPUT_LAYER_SIZE + 1)
     input.each_index do |i|
       expect(input[i].size).to eq(MAX_INPUT_LAYER_SIZE)
       input[i].each_index do |j|
@@ -108,7 +108,7 @@ RSpec.describe NeuralNetwork, type: :model do
     end
 
     output = @neural_network.separate_outputs(normalized_data)
-    expect(output.size).to eq(normalized_data.size - MAX_INPUT_LAYER_SIZE + 1)
+    expect(output.size).to eq(normalized_data.size - MAX_INPUT_LAYER_SIZE - MAX_OUTPUT_LAYER_SIZE + 1)
     output.each_index do |i|
       expect(output[i].size).to eq(MAX_OUTPUT_LAYER_SIZE)
       output[i].each_index do |j|
