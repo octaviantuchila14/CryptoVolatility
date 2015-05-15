@@ -33,10 +33,11 @@ RSpec.describe Prediction, type: :model do
     prediction.update_estimation(pred2)
     prediction.update_estimation(pred3)
 
-    expect(prediction.first_ad).to eq(1)
-    expect(prediction.first_chisq).to eq(1.51107)
-    expect(prediction.last_ad).to eq(3)
-    expect(prediction.last_chisq).to eq(4.53321)
+
+    expect(prediction.first_ad).to be_between(1 - ACC_ERROR, 1 + ACC_ERROR)
+    expect(prediction.first_chisq).to be_between(1.51107 - ACC_ERROR, 1.51107 + ACC_ERROR)
+    expect(prediction.last_ad).to be_between(3 - ACC_ERROR, 3 + ACC_ERROR)
+    expect(prediction.last_chisq).to be_between(4.53321 - ACC_ERROR, 4.53321 + ACC_ERROR)
   end
 
 

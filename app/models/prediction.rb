@@ -3,6 +3,13 @@ class Prediction < ActiveRecord::Base
   belongs_to :neural_network
   belongs_to :predictable, polymorphic: true
 
+  after_initialize :set_estimations
+
+  def set_estimations
+    @first_estimation = []
+    @last_estimation = []
+  end
+
   def past_estimates
     self.exchange_rates.where("time <= ? AND predicted = ? ", DateTime.now, true)
   end
@@ -14,30 +21,34 @@ class Prediction < ActiveRecord::Base
   def update_estimation(estimations)
     date = date_valid
 
+    p "first estimation is #{@first_estimation}"
+    p "the day of the first element in the estimation #{estimations.first.time.day} and date #{date}"
     #remove estimations which are before today, at hour
     #keep removed items for statistics
     rem_f, rem_l = [], []
     @first_estimation.each do |fe|
-      if(est.time.day < date)
-        @first_estimation >> fe
+      if(fe.time < date)
+        @first_estimation.delete(fe)
         rem_f << fe
       end
     end
     @last_estimation.each do |le|
-      if est.time.day < date
-        @last_estimation >> le
+      if le.time < date
+        @last_estimation.delete(le)
         rem_l << le
       end
     end
 
-    estimations.foreach do |e|
-      fe = @first_estimation.where("time.day == ?", date)
+    estimations.each do |e|
+      fe = @first_estimation.select{|fe|
+        #p "the time is #{fe.time} and date #{date} and equality is #{fe.time == date}"
+        fe.time == date}.first
       if(fe == nil)
         @first_estimation << e
       end
-      le = @last_estimation.where("time.day == ?", date)
+      le = @last_estimation.select{|le| le.time == date}.first
       if(le != nil)
-        @last_estimation >> le
+        @last_estimation.delete(le)
       end
       @last_estimation << e
     end
