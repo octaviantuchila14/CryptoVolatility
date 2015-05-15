@@ -154,18 +154,36 @@ class NeuralNetwork < ActiveRecord::Base
                                   num_outputs: MAX_OUTPUT_LAYER_SIZE)
     @fann.train_on_data(train, MAX_ITERATIONS, 0, MSE)
 
-=begin
-    @fann = Ai4r::NeuralNetwork::Backpropagation.new([MAX_INPUT_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE, MAX_OUTPUT_LAYER_SIZE])
+  end
 
-    # Train the network
-    inputs.size.times do |i|
-      @fann.train(inputs[i], desired_outputs[i])
-      end
-=end
+  def validate_network(inputs, desired_outputs)
+    self.create_prediction
+    self.prediction.predictable = self.predictable
+    inputs.each_index do |i|
+      #only inputs with different dates should be kept
+      outputs = @fann.run(inputs[i])
+      self.prediction.update_estimation(denormalize(outputs))
+    end
   end
 
   def predict(exchange_rates)
-    prediction
+    normalized_data = normalize(exchange_rates)
+    if(@fann == nil)
+      inputs = separate_inputs(normalized_data)
+      outputs = separate_outputs(normalized_data)
+      nr_train = (TRAINING_RATIO*inputs.size).floor
+      nr_validate = inputs.size - nr_train
+
+      train_inputs = inputs.first(nr_train)
+      train_outputs = outputs.first(nr_train)
+      validate_inputs = inputs.last(nr_validate)
+      validate_outputs = outputs.last(nr_validate)
+      train_network(train_inputs, train_outputs)
+      validate_network(validate_inputs, validate_outputs)
+    else
+      #TODO: finish this
+      #self.prediction.update_estimation(denormalize(@fann.run(inputs)))
+    end
   end
 
   #for testing

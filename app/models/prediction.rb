@@ -21,8 +21,10 @@ class Prediction < ActiveRecord::Base
         self.exchange_rates.delete(per)
       else
         #if the exchange rate is new, then update the statistics
-        actual_val = self.predictable.exchange_rates.find_by(time: er.time.beginning_of_day..er.time.end_of_day).last
-        update_stats(actual_val, er.last)
+        actual_er = self.predictable.exchange_rates.find_by(time: er.time.beginning_of_day..er.time.end_of_day)
+        if(actual_er != nil)
+          update_stats(actual_er.last, er.last)
+        end
       end
       self.exchange_rates << er
     end

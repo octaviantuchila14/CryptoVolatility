@@ -6,7 +6,9 @@ RSpec.describe NeuralNetwork, type: :model do
   ACCEPTED_ERROR = 20
 
   before(:each) do
+    @currency = FactoryGirl.create(:currency)
     @neural_network = NeuralNetwork.create
+    @currency.neural_network = @neural_network
   end
 
 
@@ -98,7 +100,7 @@ RSpec.describe NeuralNetwork, type: :model do
 
   end
 
-  it "creates or updates a prediction" do
+  it "creates a prediction" do
     exchange_rates = []
     (0..99).each do |i|
       exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
@@ -109,8 +111,30 @@ RSpec.describe NeuralNetwork, type: :model do
     #check that the number of exchange rates within the prediction is equal to the total number of tests
     #multiplied by the validation constant
     #don't check for the dates of the exchange rates because they may be shuffled randomly
-    expect(prediction.exchange_rates.where("predicted = ? && time < ?", true, DateTime.now.size).size).to
-    eq((exchange_rates.size - MAX_INPUT_LAYER_SIZE - MAX_OUTPUT_LAYER_SIZE + 1)*(1-TRAINING_RATIO))
+    expect(prediction.exchange_rates.where("predicted = ? && time < ?", true, DateTime.now).count).to
+    eq((exchange_rates.size - MAX_OUTPUT_LAYER_SIZE)*(1-TRAINING_RATIO).ceil)
+  end
+
+  it "updates an existing prediction" do
+
+  end
+
+  it "validates a neural network" do
+    exchange_rates = []
+    (0..MAX_INPUT_LAYER_SIZE + MAX_OUTPUT_LAYER_SIZE - 1).each do |i|
+      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, last: i + 1, time: DateTime.now - i.days)
+    end
+
+    @neural_network.train_network([@neural_network.normalize(exchange_rates.first(MAX_INPUT_LAYER_SIZE))],
+                                     [@neural_network.normalize(exchange_rates.last(MAX_OUTPUT_LAYER_SIZE))])
+
+    @neural_network.validate_network([@neural_network.normalize(exchange_rates.first(MAX_INPUT_LAYER_SIZE))],
+                             [@neural_network.normalize(exchange_rates.last(MAX_OUTPUT_LAYER_SIZE))])
+    expect(@neural_network.prediction).to_not be(nil)
+    expect(@neural_network.prediction.exchange_rates.size).to eq(MAX_OUTPUT_LAYER_SIZE)
+    expect(@neural_network.prediction.first_ad).to_not be(0)
+    expect(@neural_network.prediction.first_chisq).to_not be(0)
   end
 
 end
