@@ -120,7 +120,7 @@ class NeuralNetwork < ActiveRecord::Base
   def denormalize(normalized_data)
     exchange_rates = []
     normalized_data.each_index do |i|
-      exchange_rates << ExchangeRate.new(time: DateTime.now + i.days, last: normalized_data[i]*NORMALIZATION_CONSTANT)
+      exchange_rates << ExchangeRate.new(time: DateTime.now + i.days, last: normalized_data[i]*NORMALIZATION_CONSTANT, predicted: true)
     end
     exchange_rates
   end
@@ -162,14 +162,19 @@ class NeuralNetwork < ActiveRecord::Base
     inputs.each_index do |i|
       #only inputs with different dates should be kept
       outputs = @fann.run(inputs[i])
+      p "updating estimations"
       self.prediction.update_estimation(denormalize(outputs))
+      p "prediction has #{self.prediction.exchange_rates.size} ers"
     end
   end
 
   def predict(exchange_rates)
+
     normalized_data = normalize(exchange_rates)
+      p "normalized_data has size #{normalized_data.size}"
     if(@fann == nil)
       inputs = separate_inputs(normalized_data)
+      p "inputs has size #{inputs.size}"
       outputs = separate_outputs(normalized_data)
       nr_train = (TRAINING_RATIO*inputs.size).floor
       nr_validate = inputs.size - nr_train
@@ -178,12 +183,15 @@ class NeuralNetwork < ActiveRecord::Base
       train_outputs = outputs.first(nr_train)
       validate_inputs = inputs.last(nr_validate)
       validate_outputs = outputs.last(nr_validate)
+
+      p "train_inputs has size #{train_inputs.size}"
+      p "validate_inputs has size #{validate_inputs.size}"
       train_network(train_inputs, train_outputs)
       validate_network(validate_inputs, validate_outputs)
     else
-      #TODO: finish this
       #self.prediction.update_estimation(denormalize(@fann.run(inputs)))
     end
+    self.prediction
   end
 
   #for testing

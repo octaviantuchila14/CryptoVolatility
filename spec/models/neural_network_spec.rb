@@ -111,8 +111,7 @@ RSpec.describe NeuralNetwork, type: :model do
     #check that the number of exchange rates within the prediction is equal to the total number of tests
     #multiplied by the validation constant
     #don't check for the dates of the exchange rates because they may be shuffled randomly
-    expect(prediction.exchange_rates.where("predicted = ? && time < ?", true, DateTime.now).count).to
-    eq((exchange_rates.size - MAX_OUTPUT_LAYER_SIZE)*(1-TRAINING_RATIO).ceil)
+    expect(prediction.exchange_rates.where("predicted = ? AND time < ?", true, DateTime.now).size).to eq(((exchange_rates.size - MAX_OUTPUT_LAYER_SIZE)*(1-TRAINING_RATIO)).ceil)
   end
 
   it "updates an existing prediction" do
