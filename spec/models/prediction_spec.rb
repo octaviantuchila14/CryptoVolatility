@@ -26,24 +26,30 @@ RSpec.describe Prediction, type: :model do
       real << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i)
       pred1 << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i+1, predicted: true)
       pred2 << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i+2, predicted: true)
+      pred3 << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i+3, predicted: true)
     end
     currency.exchange_rates = real
     prediction.update_estimation(pred1)
     prediction.update_estimation(pred2)
 
     pred1.each_index do |i|
-      expect(prediction.exchange_rates.contains?(pred1[i])).to be(false)
-      expect(prediction.exchange_rates.contains?(pred2[i])).to be(true)
+      expect(prediction.exchange_rates.include?(pred1[i])).to be(false)
+      expect(prediction.exchange_rates.include?(pred2[i])).to be(true)
     end
 
     expect(prediction.first_ad).to be_between(1 - ACC_ERROR, 1 + ACC_ERROR)
-    expect(prediction.first_chisq).to be_between(1.51107 - ACC_ERROR, 1.51107 + ACC_ERROR)
+    expect(prediction.first_chisq).to be_between(1.204159 - ACC_ERROR, 1.204159 + ACC_ERROR)
 
     #should have no effect on values
     prediction.update_estimation(pred3)
 
+    pred2.each_index do |i|
+      expect(prediction.exchange_rates.include?(pred2[i])).to be(false)
+      expect(prediction.exchange_rates.include?(pred3[i])).to be(true)
+    end
+
     expect(prediction.first_ad).to be_between(1 - ACC_ERROR, 1 + ACC_ERROR)
-    expect(prediction.first_chisq).to be_between(1.51107 - ACC_ERROR, 1.51107 + ACC_ERROR)
+    expect(prediction.first_chisq).to be_between(1.204159 - ACC_ERROR, 1.204159 + ACC_ERROR)
 
   end
 
