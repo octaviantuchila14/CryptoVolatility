@@ -63,13 +63,13 @@ class Prediction < ActiveRecord::Base
       sum_delta = 0.0
       chi_sq = 0.0
       rem_f.each do |pred|
-        actual = self.predictable.exchange_rates.where("time == ?", pred.time)
+        actual = self.predictable.exchange_rates.where(time: pred.time.beginning_of_day..pred.time.end_of_day).first
         sum_delta += (pred.last - actual.last)
         chi_sq += (pred.last - actual.last)*(pred.last - actual.last)/pred.last
         nr = nr + 1
       end
-      self.last_ad = (self.last_ad*existing_size + sum_delta* nr)/(existing_size + nr)
-      self.last_chisq = (self.last_ad*existing_size + chi_sq* nr)/(existing_size + nr)
+      self.first_ad = (self.first_ad*existing_size + sum_delta* nr)/(existing_size + nr)
+      self.first_chisq = Math.sqrt(self.first_chisq**2 + chi_sq)
     end
 
     if(rem_l.size > 0)
@@ -77,13 +77,13 @@ class Prediction < ActiveRecord::Base
       sum_delta = 0.0
       chi_sq = 0.0
       rem_l.each do |pred|
-        actual = self.predictable.exchange_rates.where("time == ?", pred.time)
+        actual = self.predictable.exchange_rates.where(time: pred.time.beginning_of_day..pred.time.end_of_day).first
         sum_delta += (pred.last - actual.last)
         chi_sq += (pred.last - actual.last)*(pred.last - actual.last)/pred.last
         nr = nr + 1
       end
-      self.first_ad = (self.first_ad*existing_size + sum_delta* nr)/(existing_size + nr)
-      self.first_chisq = (self.first_ad*existing_size + chi_sq* nr)/(existing_size + nr)
+      self.last_ad = (self.last_ad*existing_size + sum_delta* nr)/(existing_size + nr)
+      self.last_chisq = Math.sqrt(self.last_chisq**2 + chi_sq)
     end
   end
 

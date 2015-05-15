@@ -53,10 +53,10 @@ RSpec.describe Prediction, type: :model do
     rem_l << FactoryGirl.create(:exchange_rate, time: DateTime.now - 1.days, last: 4)
 
     prediction.update_stats(rem_f, rem_l)
-    expect(prediction.last_ad).to eq(2)
-    expect(prediction.last_chisq).to eq(4/3)
-    expect(prediction.last_ad).to eq(3)
-    expect(prediction.last_ad).to eq(9/4)
+    expect(prediction.first_ad).to be_between(2 - ACC_ERROR, 2 + ACC_ERROR)
+    expect(prediction.first_chisq).to be_between(1.1547 - ACC_ERROR, 1.1547 + ACC_ERROR)
+    expect(prediction.last_ad).to be_between(3 - ACC_ERROR, 3 + ACC_ERROR)
+    expect(prediction.last_chisq).to be_between(1.5 - ACC_ERROR, 1.5 + ACC_ERROR)
   end
 
 end

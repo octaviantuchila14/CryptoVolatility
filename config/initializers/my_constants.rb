@@ -7,3 +7,5 @@ MSE = 0.01
 MAX_ITERATIONS = 1000
 HOUR = 12
 TRAINING_RATIO = 0.8
+#used for tests which return numerical values
+ACC_ERROR = 0.001
