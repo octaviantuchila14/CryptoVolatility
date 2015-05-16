@@ -9,7 +9,7 @@
 
 
 <%= "Historic data" %>
-<%= line_chart estimates_as_hash(@prediction.predictable.exchange_rates) %>
+<%= line_chart estimates_as_hash(@prediction.neural_network.exchange_rates) %>
 <%= "Predicted data so far" %>
 <%= line_chart estimates_as_hash(@prediction.past_estimates) %>
 <%= "Future estimations" %>

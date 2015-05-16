@@ -109,9 +109,9 @@ class NeuralNetwork < ActiveRecord::Base
   end
 
   def normalize(exchange_rates)
-    exchange_rates.sort_by!{ |er| er.time }
+    ser = exchange_rates.sort_by{ |er| er.time }
     normalized_data = []
-    exchange_rates.each do |er|
+    ser.each do |er|
       normalized_data << (er.last/NORMALIZATION_CONSTANT)
     end
     normalized_data
@@ -188,7 +188,7 @@ class NeuralNetwork < ActiveRecord::Base
       train_network(train_inputs, train_outputs)
       validate_network(validate_inputs, validate_outputs, exchange_rates[MAX_INPUT_LAYER_SIZE + nr_train].date)
     else
-      #self.prediction.update_estimation(denormalize(@fann.run(inputs)))
+      self.prediction.update_estimation(denormalize(@fann.run(inputs), exchange_rates[0].date))
     end
     self.prediction
   end

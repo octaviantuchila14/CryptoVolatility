@@ -44,9 +44,9 @@ class CurrenciesController < ApplicationController
     if @currency.update(currency_params)
       prediction = nil
       if(params[:currency][:prediction_type] == "neural_network")
-        prediction = @currency.neural_network.predict
+        prediction = @currency.neural_network.predict(@currency.exchange_rates)
       elsif(params[:currency][:prediction_type]  == "capm")
-        prediction = @currency.market.capm_prediction
+        prediction = @currency.market.capm_prediction(@currency.exchange_rates)
       end
       redirect_to prediction
     end
