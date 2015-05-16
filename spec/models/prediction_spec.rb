@@ -6,8 +6,8 @@ RSpec.describe Prediction, type: :model do
     prediction = FactoryGirl.create(:prediction)
     past_er, future_er = [], []
     5.times do |i|
-      past_er << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, predicted: true)
-      future_er << FactoryGirl.create(:exchange_rate, time: DateTime.now + (i + 1).days, predicted: true)
+      past_er << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, date: Date.today- (5 - (i + 1)).days, predicted: true)
+      future_er << FactoryGirl.create(:exchange_rate, time: DateTime.now + (i + 1).days, date: Date.today + (i + 1).days, predicted: true)
     end
     prediction.exchange_rates << past_er
     prediction.exchange_rates << future_er
@@ -23,10 +23,10 @@ RSpec.describe Prediction, type: :model do
     #create 3 estimations and expect the values returned to be for the first and the last
     real, pred1, pred2, pred3 = [], [], [], []
     (1..5).each do |i|
-      real << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i)
-      pred1 << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i+1, predicted: true)
-      pred2 << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i+2, predicted: true)
-      pred3 << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i+3, predicted: true)
+      real << FactoryGirl.create(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i, date: Date.today - (5 - (i + 1)).days)
+      pred1 << FactoryGirl.build(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i+1, predicted: true, date: Date.today - (5 - (i + 1)).days)
+      pred2 << FactoryGirl.build(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i+2, predicted: true, date: Date.today - (5 - (i + 1)).days)
+      pred3 << FactoryGirl.build(:exchange_rate, time: DateTime.now - (5 - (i + 1)).days, last: i+3, predicted: true, date: Date.today - (5 - (i + 1)).days)
     end
     currency.exchange_rates = real
     prediction.update_estimation(pred1)

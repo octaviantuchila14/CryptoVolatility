@@ -15,7 +15,7 @@ RSpec.describe NeuralNetwork, type: :model do
   it "transforms exchange rates into normalized data" do
     exchange_rates = []
     (0..9).each do |i|
-      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
+      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days, date: Date.today - i.days)
     end
     exchange_rates.sort_by!{|er| er.time}
 
@@ -33,13 +33,13 @@ RSpec.describe NeuralNetwork, type: :model do
       normalized_data << i / NORMALIZATION_CONSTANT
     end
 
-    exchange_rates = @neural_network.denormalize(normalized_data)
+    exchange_rates = @neural_network.denormalize(normalized_data, Date.today)
 
     expect(normalized_data.size).to eq(exchange_rates.size)
     exchange_rates.each_index do |i|
       expect(normalized_data[i] * NORMALIZATION_CONSTANT).to eq(exchange_rates[i].last)
       if(i + 1 < exchange_rates.size)
-        expect(exchange_rates[i].time.day).to eq(exchange_rates[i + 1].time.day - 1)
+        expect(exchange_rates[i].date).to eq(exchange_rates[i + 1].date - 1.day)
       end
     end
   end
@@ -103,15 +103,12 @@ RSpec.describe NeuralNetwork, type: :model do
   it "creates a prediction" do
     exchange_rates = []
     (0..99).each do |i|
-      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
+      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days, date: Date.today - i.days)
     end
-    prediction = @neural_network.predict(exchange_rates)
-    expect(prediction).to_not be(nil)
+    @neural_network.predict(exchange_rates)
+    expect(@neural_network.prediction).to_not be(nil)
 
-    #check that the number of exchange rates within the prediction is equal to the total number of tests
-    #multiplied by the validation constant
-    #don't check for the dates of the exchange rates because they may be shuffled randomly
-    expect(prediction.exchange_rates.where("predicted = ? AND time < ?", true, DateTime.now).size).to eq(((exchange_rates.size - MAX_OUTPUT_LAYER_SIZE)*(1-TRAINING_RATIO)).ceil)
+    expect(@neural_network.prediction.exchange_rates.where(predicted: true).size).to eq(((exchange_rates.size - MAX_OUTPUT_LAYER_SIZE)*(1-TRAINING_RATIO)).ceil)
   end
 
   it "updates an existing prediction" do
@@ -121,15 +118,16 @@ RSpec.describe NeuralNetwork, type: :model do
   it "validates a neural network" do
     exchange_rates = []
     (0..MAX_INPUT_LAYER_SIZE + MAX_OUTPUT_LAYER_SIZE - 1).each do |i|
-      exchange_rates << FactoryGirl.create(:exchange_rate, last: i, time: DateTime.now - i.days)
-      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, last: i + 1, time: DateTime.now - i.days)
+      exchange_rates << FactoryGirl.build(:exchange_rate, last: i, time: DateTime.now - i.days, date: Date.today - i.days)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, last: i + 1, time: DateTime.now - i.days, date: Date.today - i.days)
     end
 
     @neural_network.train_network([@neural_network.normalize(exchange_rates.first(MAX_INPUT_LAYER_SIZE))],
                                      [@neural_network.normalize(exchange_rates.last(MAX_OUTPUT_LAYER_SIZE))])
 
     @neural_network.validate_network([@neural_network.normalize(exchange_rates.first(MAX_INPUT_LAYER_SIZE))],
-                             [@neural_network.normalize(exchange_rates.last(MAX_OUTPUT_LAYER_SIZE))])
+                                     [@neural_network.normalize(exchange_rates.last(MAX_OUTPUT_LAYER_SIZE))],
+                                     exchange_rates[MAX_INPUT_LAYER_SIZE].date)
     expect(@neural_network.prediction).to_not be(nil)
     expect(@neural_network.prediction.exchange_rates.size).to eq(MAX_OUTPUT_LAYER_SIZE)
     expect(@neural_network.prediction.first_ad).to_not be(0)

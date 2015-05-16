@@ -15,18 +15,24 @@ class Prediction < ActiveRecord::Base
   def update_estimation(estimations)
 
     estimations.each do |er|
-      per = self.exchange_rates.find_by(time: er.time.beginning_of_day..er.time.end_of_day)
+      per = self.exchange_rates.find_by(date: er.date)
       if(per != nil)
         #replace old one with new one
+        p "per is not nil"
         self.exchange_rates.delete(per)
+        per.destroy
       else
         #if the exchange rate is new, then update the statistics
-        actual_er = self.predictable.exchange_rates.find_by(time: er.time.beginning_of_day..er.time.end_of_day)
+        actual_er = self.predictable.exchange_rates.find_by(date: er.date)
         if(actual_er != nil)
           update_stats(actual_er.last, er.last)
         end
       end
+      p "added #{er.last} from #{er.date}, #{er.predicted}"
+      er.save
+      p "added #{er.last} from #{er.date}, #{er.predicted}"
       self.exchange_rates << er
+      p "self.ers is #{self.exchange_rates.size}"
     end
 
   end

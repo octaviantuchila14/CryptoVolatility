@@ -117,10 +117,10 @@ class NeuralNetwork < ActiveRecord::Base
     normalized_data
   end
 
-  def denormalize(normalized_data)
+  def denormalize(normalized_data, start_date)
     exchange_rates = []
     normalized_data.each_index do |i|
-      exchange_rates << ExchangeRate.new(time: DateTime.now + i.days, last: normalized_data[i]*NORMALIZATION_CONSTANT, predicted: true)
+      exchange_rates << ExchangeRate.new(date: start_date + i.days, last: normalized_data[i]*NORMALIZATION_CONSTANT, predicted: true)
     end
     exchange_rates
   end
@@ -156,25 +156,26 @@ class NeuralNetwork < ActiveRecord::Base
 
   end
 
-  def validate_network(inputs, desired_outputs)
+  def validate_network(inputs, desired_outputs, output_start_date)
     self.create_prediction
     self.prediction.predictable = self.predictable
     inputs.each_index do |i|
       #only inputs with different dates should be kept
       outputs = @fann.run(inputs[i])
-      p "updating estimations"
-      self.prediction.update_estimation(denormalize(outputs))
-      p "prediction has #{self.prediction.exchange_rates.size} ers"
+      den = denormalize(outputs, output_start_date)
+      den.each do |d|
+        p "denormalized rates are #{d.date}, #{d.last}, #{d.predicted}"
+      end
+      self.prediction.update_estimation(denormalize(outputs, output_start_date))
+      p "we have #{self.prediction.exchange_rates.size} ers for prediction"
     end
   end
 
   def predict(exchange_rates)
 
     normalized_data = normalize(exchange_rates)
-      p "normalized_data has size #{normalized_data.size}"
     if(@fann == nil)
       inputs = separate_inputs(normalized_data)
-      p "inputs has size #{inputs.size}"
       outputs = separate_outputs(normalized_data)
       nr_train = (TRAINING_RATIO*inputs.size).floor
       nr_validate = inputs.size - nr_train
@@ -184,10 +185,8 @@ class NeuralNetwork < ActiveRecord::Base
       validate_inputs = inputs.last(nr_validate)
       validate_outputs = outputs.last(nr_validate)
 
-      p "train_inputs has size #{train_inputs.size}"
-      p "validate_inputs has size #{validate_inputs.size}"
       train_network(train_inputs, train_outputs)
-      validate_network(validate_inputs, validate_outputs)
+      validate_network(validate_inputs, validate_outputs, exchange_rates[MAX_INPUT_LAYER_SIZE + nr_train].date)
     else
       #self.prediction.update_estimation(denormalize(@fann.run(inputs)))
     end
