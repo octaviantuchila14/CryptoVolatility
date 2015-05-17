@@ -1,9 +1,10 @@
 require 'statsample'
 
 class Market < ActiveRecord::Base
-  has_many :exchange_rates
   has_one :neural_network, as: :predictable
   has_one :prediction, as: :predictable
+  has_many :exchange_rates, as: :predictable
+  has_many :currencies
 
   self.after_initialize do
     #get quotes for american market
@@ -12,7 +13,7 @@ class Market < ActiveRecord::Base
 
   def get_variation(size)
     variations = []
-    exchange_rates = self.exchange_rates.where(predicted: false).sort_by{|er| er.time}.last(size)
+    exchange_rates = self.exchange_rates.where(predicted: false).sort_by{|er| er.date}.last(size)
     exchange_rates.each_index do |index|
       if(index + 1 < exchange_rates.size)
         variations << (exchange_rates[index + 1].last - exchange_rates[index].last)
@@ -21,9 +22,9 @@ class Market < ActiveRecord::Base
     variations
   end
 
-  def get_expected_returns(mr_var)
+  def get_expected_returns(exchange_rates)
     ers = []
-    mr_var.each_index do |index|
+    exchange_rates.each_index do |index|
       if(index + 1 < exchange_rates.size)
         ers << (exchange_rates[index + 1].last - exchange_rates[index].last)/exchange_rates[index].last
       end
@@ -51,7 +52,7 @@ class Market < ActiveRecord::Base
     last_date = Date.today - cr_var.size.days
 
     beta = get_beta(cr_var, mr_var)
-    expected_returns = et_expected_return(mr_var)
+    expected_returns = get_expected_returns(currency.exchange_rates)
 
     predicted_ex_rates = []
     expected_returns.each do |i|

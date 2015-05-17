@@ -3,12 +3,12 @@ require 'rails_helper'
 describe 'My behaviour' do
 
   before :each do
-    @currency = FactoryGirl.create(:currency, full_name: 'Bitcoin', name: 'btc')
     @market = FactoryGirl.create(:market, name: '^GSPC', risk_free_rate: 0.25)
+    @currency = FactoryGirl.create(:currency, full_name: 'Bitcoin', name: 'btc')
 
     3.times do |i|
-      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: i, predictable_id: @market.id)
-      @market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: 10*i, predictable_id: @market.id)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: i + 1, predictable_id: @currency.id)
+      @market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: 10*(i + 1), predictable_id: @market.id)
     end
   end
 

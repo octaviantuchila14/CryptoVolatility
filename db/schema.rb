@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150517094227) do
+ActiveRecord::Schema.define(version: 20150517140032) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,16 +31,18 @@ ActiveRecord::Schema.define(version: 20150517094227) do
     t.float    "high"
     t.float    "low"
     t.float    "volume"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.string   "subject"
     t.string   "ref_cr"
-    t.boolean  "predicted",     default: false
+    t.boolean  "predicted",        default: false
     t.integer  "prediction_id"
     t.integer  "currency_id"
     t.integer  "market_id"
     t.datetime "time"
     t.date     "date"
+    t.integer  "predictable_id"
+    t.string   "predictable_type"
   end
 
   create_table "markets", force: :cascade do |t|
