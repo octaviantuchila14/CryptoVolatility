@@ -16,7 +16,7 @@
 
 <%=form_for @currency do |f| %>
     <%= f.hidden_field :prediction_type, value: :capm%>
-    <%= f.submit "CAPM previous estimations", class: "btn btn-primary" %>
+    <%= f.submit "Apply financial models", class: "btn btn-primary" %>
 <% end %>
 
 <%= link_to 'Edit', edit_currency_path(@currency) %> |

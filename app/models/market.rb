@@ -21,10 +21,17 @@ class Market < ActiveRecord::Base
     variations
   end
 
-  def get_beta(currency)
-    cr_var = currency.get_variation.to_scale
-    mr_var = get_variation(cr_var.size + 1).to_scale
+  def get_expected_returns(mr_var)
+    ers = []
+    mr_var.each_index do |index|
+      if(index + 1 < exchange_rates.size)
+        ers << (exchange_rates[index + 1].last - exchange_rates[index].last)/exchange_rates[index].last
+      end
+    end
+    ers
+  end
 
+  def get_beta(cr_var, mr_var)
     var = mr_var.variance_population
     cov = Statsample::Bivariate.covariance(cr_var, mr_var)
 
@@ -35,10 +42,23 @@ class Market < ActiveRecord::Base
     else
       raise "Impossible: variance 0, covariance bigger than 0"
     end
+    beta
   end
 
   def capm_prediction(currency)
-    self.risk_free_rate + get_beta(currency)*(market_expected_return - risk_free_rate)
+    cr_var = currency.get_variation.to_scale
+    mr_var = get_variation(cr_var.size + 1).to_scale
+    last_date = Date.today - cr_var.size.days
+
+    beta = get_beta(cr_var, mr_var)
+    expected_returns = et_expected_return(mr_var)
+
+    predicted_ex_rates = []
+    expected_returns.each do |i|
+      value = self.risk_free_rate + beta*(expected_returns[i] - risk_free_rate)
+      predicted_ex_rates << ExchangeRate.new(last: value, date: last_date + i.days)
+    end
+    predicted_ex_rates
   end
 
 end

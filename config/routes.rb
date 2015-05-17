@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   end
   resources :neural_networks
 
+  resources :markets
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

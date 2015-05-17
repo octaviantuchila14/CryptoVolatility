@@ -1,0 +1,9 @@
+<p id="notice"><%= notice %></p>
+
+<%= "Currency Historic data" %>
+<%= line_chart estimates_as_hash(@pred_currency.exchange_rates) %>
+<%= "CAPM estimation" %>
+<%= line_chart estimates_as_hash(@predicted_exchange_rates) %>
+
+<%= link_to 'Edit', edit_market_path(@market) %> |
+<%= link_to 'Back', markets_path %>
