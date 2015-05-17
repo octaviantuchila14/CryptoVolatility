@@ -9,6 +9,6 @@
 market = Market.create(name: "^GSPC", risk_free_rate: 0.25)
 currency = Currency.create(name: "btc", full_name: "Bitcoin")
 100.times do |i|
-  market.exchange_rates << ExchangeRate.create(subject: currency.name, date: Date.today - (100 + i).days, last: i + 1, ref_cr: "usd")
-  currency.exchange_rates << ExchangeRate.create(subject: currency.name, date: Date.today - (100 +  i).days, last: 2*(i + 1), ref_cr: "usd")
+  market.exchange_rates << ExchangeRate.create(subject: currency.name, date: Date.today - (100 - i).days, last: i + 1, ref_cr: "usd")
+  currency.exchange_rates << ExchangeRate.create(subject: currency.name, date: Date.today - (100 -  i).days, last: (i + 1), ref_cr: "usd")
 end
