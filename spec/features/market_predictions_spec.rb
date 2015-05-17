@@ -10,6 +10,7 @@ describe 'My behaviour' do
       @currency.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: i + 1, predictable_id: @currency.id)
       @market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: 10*(i + 1), predictable_id: @market.id)
     end
+
   end
 
   it 'should display CAPM estimation' do

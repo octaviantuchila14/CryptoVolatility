@@ -55,10 +55,10 @@ class Market < ActiveRecord::Base
     expected_returns = get_expected_returns(currency.exchange_rates)
 
     predicted_ex_rates = []
-    expected_returns.each do |i|
+    expected_returns.each_index do |i|
       value = self.risk_free_rate + beta*(expected_returns[i] - risk_free_rate)
       currency_rate = currency.exchange_rates.find_by(date: last_date + (i - 1).days)
-      predicted_ex_rates << ExchangeRate.new(last: currency_rate.last*(1 + value), date: last_date + i.days, predicted: true)
+      predicted_ex_rates << ExchangeRate.create(last: currency_rate.last*(1 + value), date: last_date + i.days, predicted: true)
     end
     predicted_ex_rates
   end

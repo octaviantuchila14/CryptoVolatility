@@ -3,46 +3,23 @@ require 'rails_helper'
 RSpec.describe Market, type: :model do
 
   before :each do
-    @market = FactoryGirl.create(:market, market_expected_return: 10, risk_free_rate: 4)
-    @currency = FactoryGirl.create(:currency)
-  end
+    @market = FactoryGirl.create(:market, name: '^GSPC', risk_free_rate: 0.25)
+    @currency = FactoryGirl.create(:currency, full_name: 'Bitcoin', name: 'btc')
 
-  it "evaluates the beta of a currency" do
     3.times do |i|
-      er = FactoryGirl.create(:exchange_rate, last: 10, time: DateTime.now - i.days, date: Date.today - i.days)
-      @market.exchange_rates << er
-      @currency.exchange_rates << er
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: i + 1, predictable_id: @currency.id)
+      @market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: i + 1, predictable_id: @market.id)
     end
-    beta = @market.get_beta(@currency)
-    expect(beta).to eq(1)
   end
 
-  it "evaluates the beta of a currency" do
-    val = [[0, 80, 90, 110],[0, 5, 25]]
-    3.times do |i|
-      erm = FactoryGirl.create(:exchange_rate, last: val[0][i], time: DateTime.now - (3 - i).days, date: Date.today - (3-i).days, subject: @market.name)
-      ercr = FactoryGirl.create(:exchange_rate, last: val[1][i], time: DateTime.now - (3 - i).days, date: Date.today - (3-i).days, subject: @currency.name)
-      @market.exchange_rates << erm
-      @currency.exchange_rates << ercr
-    end
-    @market.exchange_rates << FactoryGirl.create(:exchange_rate, last: val[0][3], time: DateTime.now)
+  it 'for beta=1, it returns the same prices as for the market' do
+    predicted_ex_rates = @market.capm_prediction(@currency)
 
-    beta = @market.get_beta(@currency)
-    expect(beta).to eq(3)
+    2.times do |i|
+      expect(predicted_ex_rates[i].last).to eq(@currency.exchange_rates[i + 1].last)
+      expect(predicted_ex_rates[i].date).to eq(@currency.exchange_rates[i + 1].date)
+    end
   end
 
-  it "returns the CAPM price of currency" do
-    val = [[0, 80, 90, 110],[0, 5, 25]]
-    3.times do |i|
-      erm = FactoryGirl.create(:exchange_rate, last: val[0][i], time: DateTime.now - (3 - i).days, date: Date.today - (3-i).days, subject: @market.name)
-      ercr = FactoryGirl.create(:exchange_rate, last: val[1][i], time: DateTime.now - (3 - i).days, date: Date.today - (3-i).days, subject: @currency.name)
-      @market.exchange_rates << erm
-      @currency.exchange_rates << ercr
-    end
-    @market.exchange_rates << FactoryGirl.create(:exchange_rate, last: val[0][3], time: DateTime.now, date: Date.today)
-
-    capm = @market.capm_prediction(@currency)
-    expect(capm).to eq(22)
-  end
 
 end
