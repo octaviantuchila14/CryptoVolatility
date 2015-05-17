@@ -2,17 +2,15 @@ require 'ruby-fann'
 
 class NeuralNetwork < ActiveRecord::Base
 
-  belongs_to :currency, inverse_of: :neural_network
+  belongs_to :predictable, polymorphic: true
   has_one :prediction
 
   #for now, it predicts only the following day
-  MAX_INPUT_LAYER_SIZE = 40
   MAX_HIDDEN_LAYER_SIZE = 50
-  MAX_EPOCHS = 1000
+  MAX_EPOCHS = 50
   MAX_OUTPUTS = 1
   MSE = 0.0000000001
   ACCEPTABLE_ERROR = 0.01
-  NORMALISATION_CONSTANT = 10000
   TRAINING_DATA_PERCENTAGE = 0.8
 
   self.after_initialize do
@@ -21,9 +19,8 @@ class NeuralNetwork < ActiveRecord::Base
 
   def predict
     if(self.prediction == nil)
-      @exchange_rates = self.currency.exchange_rates
-      #@exchange_rates = ExchangeRate.where(subject: self.currency.name, date: Date.today - self.max_nr_of_days..Date.today)
-      @exchange_rates.sort_by { |er| er.date}
+      @exchange_rates = self.predictable.exchange_rates
+      @exchange_rates.sort_by { |er| er.time}
       daily_values = []
       @exchange_rates.each do |er|
         daily_values << (er.last)
@@ -34,14 +31,13 @@ class NeuralNetwork < ActiveRecord::Base
       optimise_training daily_values
 
 
-      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map!{ |dv| dv / NORMALISATION_CONSTANT}).map!{|dv| dv * NORMALISATION_CONSTANT}
+      predicted_rates = @fann.run(daily_values.last(MAX_INPUT_LAYER_SIZE).map!{ |dv| dv / NORMALIZATION_CONSTANT}).map!{|dv| dv * NORMALIZATION_CONSTANT}
 
       (0..predicted_rates.size - 1).each do |i|
         #ASS: I'm getting the data for today at the beginning of the day
         #TODO change from create to new
-        #self.prediction.exchange_rates << ExchangeRate.new(last: predicted_rates[i], date: Date.today + i + 1, predicted: true)
         self.prediction.exchange_rates.create(subject: @exchange_rates.first.subject, ref_cr: @exchange_rates.first.ref_cr,
-                                              last: predicted_rates[i], date: Date.today + i + 1, predicted: true)
+                                              last: predicted_rates[i], time: DateTime.now + (i + 1).days, predicted: true)
       end
     end
     self.prediction
@@ -73,25 +69,19 @@ class NeuralNetwork < ActiveRecord::Base
     nr = 0
     chi_sq = 0.0
     (0..inputs.size - 1).each do |i|
-      output = @fann.run(inputs[i].map!{ |dv| dv / NORMALISATION_CONSTANT}).map!{|dv| dv * NORMALISATION_CONSTANT}
-
-      if(i == 0)
-        p inputs[i]
-        p desired_outputs[i]
-        p output
-      end
+      output = @fann.run(inputs[i].map!{ |dv| dv / NORMALIZATION_CONSTANT}).map!{|dv| dv * NORMALIZATION_CONSTANT}
 
       avg += (output - desired_outputs[i]).map!{ |x| x.abs }.reduce(:+)
       nr += output.size
       chi_sq += compute_chi(output, desired_outputs[i])
     end
-    self.prediction.average_difference = avg / nr
-    self.prediction.chi_squared = chi_sq
+    self.prediction.last_ad = avg / nr
+    self.prediction.last_chisq = chi_sq
   end
 
   def train(inputs, desired_outputs)
-    inputs = inputs.map!{|x| x.map!{ |y| y / NORMALISATION_CONSTANT}}
-    desired_outputs.map!{|x| x.map!{ |y| y / NORMALISATION_CONSTANT}}
+    inputs = inputs.map!{|x| x.map!{ |y| y / NORMALIZATION_CONSTANT}}
+    desired_outputs.map!{|x| x.map!{ |y| y / NORMALIZATION_CONSTANT}}
 
     inputs.each do |i|
       i.each do |x|
@@ -117,5 +107,96 @@ class NeuralNetwork < ActiveRecord::Base
     end
     sum
   end
+
+  def normalize(exchange_rates)
+    ser = exchange_rates.sort_by{ |er| er.time }
+    normalized_data = []
+    ser.each do |er|
+      normalized_data << (er.last/NORMALIZATION_CONSTANT)
+    end
+    normalized_data
+  end
+
+  def denormalize(normalized_data, start_date)
+    exchange_rates = []
+    normalized_data.each_index do |i|
+      exchange_rates << ExchangeRate.new(date: start_date + i.days, last: normalized_data[i]*NORMALIZATION_CONSTANT, predicted: true)
+    end
+    exchange_rates
+  end
+
+  def separate_inputs(data)
+    inputs = []
+    (0..data.size - MAX_INPUT_LAYER_SIZE - MAX_OUTPUT_LAYER_SIZE).each do |i|
+      inputs << []
+      (0..MAX_INPUT_LAYER_SIZE - 1).each do |j|
+        inputs[i] << data[i + j]
+      end
+    end
+    inputs
+  end
+
+  def separate_outputs(data)
+    outputs = []
+    (MAX_INPUT_LAYER_SIZE..data.size - MAX_OUTPUT_LAYER_SIZE).each do |i|
+      outputs << []
+      (0..MAX_OUTPUT_LAYER_SIZE - 1).each do |j|
+        outputs[i - MAX_INPUT_LAYER_SIZE] << data[i + j]
+      end
+    end
+    outputs
+  end
+
+  def train_network(inputs, desired_outputs)
+    train = RubyFann::TrainData.new(inputs: inputs, desired_outputs: desired_outputs)
+    @fann = RubyFann::Standard.new(num_inputs: MAX_INPUT_LAYER_SIZE,
+                                  hidden_neurons: [MAX_HIDDEN_LAYER_SIZE, MAX_HIDDEN_LAYER_SIZE],
+                                  num_outputs: MAX_OUTPUT_LAYER_SIZE)
+    @fann.train_on_data(train, MAX_ITERATIONS, 0, MSE)
+
+  end
+
+  def validate_network(inputs, desired_outputs, output_start_date)
+    self.create_prediction
+    self.prediction.predictable = self.predictable
+    inputs.each_index do |i|
+      #only inputs with different dates should be kept
+      outputs = @fann.run(inputs[i])
+      den = denormalize(outputs, output_start_date)
+      den.each do |d|
+        p "denormalized rates are #{d.date}, #{d.last}, #{d.predicted}"
+      end
+      self.prediction.update_estimation(denormalize(outputs, output_start_date))
+      p "we have #{self.prediction.exchange_rates.size} ers for prediction"
+    end
+  end
+
+  def predict(exchange_rates)
+
+    normalized_data = normalize(exchange_rates)
+    if(@fann == nil)
+      inputs = separate_inputs(normalized_data)
+      outputs = separate_outputs(normalized_data)
+      nr_train = (TRAINING_RATIO*inputs.size).floor
+      nr_validate = inputs.size - nr_train
+
+      train_inputs = inputs.first(nr_train)
+      train_outputs = outputs.first(nr_train)
+      validate_inputs = inputs.last(nr_validate)
+      validate_outputs = outputs.last(nr_validate)
+
+      train_network(train_inputs, train_outputs)
+      validate_network(validate_inputs, validate_outputs, exchange_rates[MAX_INPUT_LAYER_SIZE + nr_train].date)
+    else
+      self.prediction.update_estimation(denormalize(@fann.run(inputs), exchange_rates[0].date))
+    end
+    self.prediction
+  end
+
+  #for testing
+  def get_network
+    @fann
+  end
+
 
 end

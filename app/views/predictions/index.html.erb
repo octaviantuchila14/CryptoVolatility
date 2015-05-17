@@ -13,7 +13,7 @@
   <tbody>
     <% @predictions.each do |prediction| %>
       <tr>
-        <td><%= prediction.average_difference %></td>
+        <td><%= prediction.last_ad %></td>
         <td><%= link_to 'Show', prediction %></td>
         <td><%= link_to 'Edit', edit_prediction_path(prediction) %></td>
         <td><%= link_to 'Destroy', prediction, method: :delete, data: { confirm: 'Are you sure?' } %></td>

@@ -27,7 +27,7 @@ feature 'User navigates to the home page' do
 
   scenario 'she can view a prediction for that number of days' do
     (0..100).each do |i|
-      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i.days)
     end
 
     visit '/'
@@ -40,7 +40,7 @@ feature 'User navigates to the home page' do
 
   scenario 'but she can\'t create more than 1 prediction' do
     (0..100).each do |i|
-      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i)
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i.days)
     end
 
     visit "/currencies/#{@currency.id}"
@@ -52,6 +52,18 @@ feature 'User navigates to the home page' do
     click_button 'Predict'
     expect(page).to have_content 'Expected values'
     expect(Prediction.all.size).to eq(1)
+  end
+
+  scenario 'she can ask for a prediction of type CAPM' do
+    (0..100).each do |i|
+      @currency.exchange_rates << FactoryGirl.create(:exchange_rate, subject: @currency.name, last: 10*i, date: Date.today - i.days)
+    end
+
+    visit '/'
+    click_link 'Show'
+    #select number of days
+    click_button 'CAPM previous estimations'
+    expect(@currency.prediction_type).to eq(:capm)
   end
 
 end

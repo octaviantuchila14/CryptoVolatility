@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150509160022) do
+ActiveRecord::Schema.define(version: 20150516112545) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,11 +22,11 @@ ActiveRecord::Schema.define(version: 20150509160022) do
     t.datetime "updated_at",      null: false
     t.string   "full_name"
     t.integer  "prediction_days"
+    t.integer  "prediction_type"
+    t.integer  "market_id"
   end
 
   create_table "exchange_rates", force: :cascade do |t|
-    t.date     "date"
-    t.time     "time"
     t.float    "last"
     t.float    "high"
     t.float    "low"
@@ -38,17 +38,18 @@ ActiveRecord::Schema.define(version: 20150509160022) do
     t.boolean  "predicted",     default: false
     t.integer  "prediction_id"
     t.integer  "currency_id"
-  end
-
-  create_table "financial_models", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "market_id"
+    t.datetime "time"
+    t.date     "date"
   end
 
   create_table "markets", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "full_name"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.float    "market_expected_return"
+    t.float    "risk_free_rate"
   end
 
   create_table "neural_networks", force: :cascade do |t|
@@ -57,16 +58,21 @@ ActiveRecord::Schema.define(version: 20150509160022) do
     t.integer  "input_layer_size"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
-    t.integer  "currency_id"
     t.integer  "max_nr_of_days"
+    t.integer  "predictable_id"
+    t.string   "predictable_type"
   end
 
   create_table "predictions", force: :cascade do |t|
-    t.float    "average_difference"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.float    "last_ad",           default: 0.0
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.integer  "neural_network_id"
-    t.float    "chi_squared"
+    t.float    "last_chisq",        default: 0.0
+    t.float    "first_ad",          default: 0.0
+    t.float    "first_chisq",       default: 0.0
+    t.integer  "predictable_id"
+    t.string   "predictable_type"
   end
 
 end

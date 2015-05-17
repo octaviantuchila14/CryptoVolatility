@@ -1,46 +1,44 @@
 require 'statsample'
 
 class Market < ActiveRecord::Base
+  has_many :exchange_rates
+  has_one :neural_network, as: :predictable
+  has_one :prediction, as: :predictable
 
-  def get_mean
-    get_exchange_rates.mean
+  self.after_initialize do
+    #get quotes for american market
+    #rake query_api:get_market_data
   end
 
-  def get_volatility
-    get_exchange_rates.standard_deviation_population
-  end
-
-  def get_variance
-    sd = get_volatility
-    sd * sd
-  end
-
-  def get_covariance(asset_rates = nil)
-    market_rates = get_exchange_rates
-    asset_rates = asset_rates.to_scale
-    #make vectors have same size
-    if(asset_rates.size > market_rates.size)
-      asset_rates = asset_rates.last(market_rates.size)
+  def get_variation(size)
+    variations = []
+    exchange_rates = self.exchange_rates.where(predicted: false).sort_by{|er| er.time}.last(size)
+    exchange_rates.each_index do |index|
+      if(index + 1 < exchange_rates.size)
+        variations << (exchange_rates[index + 1].last - exchange_rates[index].last)
+      end
     end
-    if(asset_rates.size < market_rates.size)
-      market_rates = market_rates.last(asset_rates.size)
+    variations
+  end
+
+  def get_beta(currency)
+    cr_var = currency.get_variation.to_scale
+    mr_var = get_variation(cr_var.size + 1).to_scale
+
+    var = mr_var.variance_population
+    cov = Statsample::Bivariate.covariance(cr_var, mr_var)
+
+    if(var != 0)
+      beta = cov/var
+    elsif(cov == 0)
+      beta = 1
+    else
+      raise "Impossible: variance 0, covariance bigger than 0"
     end
-
-    Statsample::Bivariate.covariance(market_rates, asset_rates)
   end
 
-  def get_beta(asset_rates = nil)
-    get_covariance(asset_rates)/get_variance
-  end
-
-  private
-  def get_exchange_rates
-    market_data = ExchangeRate.where(subject: self.name)
-    #compute differences between 2 consecutive days
-    lastValues = market_data.map{ |elem| elem[:last] }
-    dataset = lastValues.each_cons(2).to_a.map { |elem| elem[1] - elem[0]}
-    p dataset
-    dataset.to_scale
+  def capm_prediction(currency)
+    self.risk_free_rate + get_beta(currency)*(market_expected_return - risk_free_rate)
   end
 
 end

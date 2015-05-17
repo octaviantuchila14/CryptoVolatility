@@ -1,1 +1,1 @@
-json.extract! @prediction, :id, :average_difference, :created_at, :updated_at
+json.extract! @prediction, :id, :last_ad, :created_at, :updated_at

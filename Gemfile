@@ -58,6 +58,7 @@ gem 'yahoo-finance', require: 'yahoo_finance'
 #getting data statistics
 #gem 'descriptive_statistics', '~> 2.4.0', :require => 'descriptive_statistics/safe'
 gem 'statsample'
+gem 'statsample-bivariate-extension'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0'
@@ -69,6 +70,7 @@ end
 
 #neural networks
 gem 'ruby-fann', '~> 1.2.6'
+gem 'ai4r'
 
 #charts
 gem 'chartkick'
@@ -81,6 +83,10 @@ gem 'pg'
 
 #for heroku
 gem 'rails_12factor', group: :production
+
+#for cleaning the database between tests
+gem 'database_cleaner'
+
 
 #for defining constants
 

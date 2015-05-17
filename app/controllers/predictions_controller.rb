@@ -69,6 +69,6 @@ class PredictionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def prediction_params
-      params.require(:prediction).permit(:average_difference)
+      params.require(:prediction).permit(:last_ad)
     end
 end

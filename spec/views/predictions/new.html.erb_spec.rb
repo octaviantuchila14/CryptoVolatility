@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "predictions/new", type: :view do
   before(:each) do
     assign(:prediction, Prediction.new(
-      :average_difference => 1
+      :last_ad => 1
     ))
   end
 
@@ -12,7 +12,7 @@ RSpec.describe "predictions/new", type: :view do
 
     assert_select "form[action=?][method=?]", predictions_path, "post" do
 
-      assert_select "input#prediction_average_difference[name=?]", "prediction[average_difference]"
+      assert_select "input#prediction_last_ad[name=?]", "prediction[last_ad]"
     end
   end
 end
