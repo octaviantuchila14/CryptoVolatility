@@ -87,6 +87,8 @@ gem 'rails_12factor', group: :production
 #for cleaning the database between tests
 gem 'database_cleaner'
 
+#for downloading CSV files
+gem 'mechanize', '~> 2.7.3'
 
 #for defining constants
 
