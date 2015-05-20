@@ -3,8 +3,11 @@ require 'statsample'
 class Market < ActiveRecord::Base
   has_one :neural_network, as: :predictable
   has_one :prediction, as: :predictable
+
   has_many :exchange_rates, as: :predictable
   has_many :currencies
+  has_one :market, as: liquid_submarket
+  belongs_to :market, as: supermarket
 
   self.after_initialize do
     #get quotes for american market

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150517140032) do
+ActiveRecord::Schema.define(version: 20150520103005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 20150517140032) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.float    "risk_free_rate"
+    t.integer  "supermarket_id"
   end
 
   create_table "neural_networks", force: :cascade do |t|
