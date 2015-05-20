@@ -23,19 +23,19 @@ RSpec.describe Market, type: :model do
 
   it 'returns the illiquidity adjusted prediction' do
     @liquid_market = FactoryGirl.create(:market, name: '^OEX')
-    @market.most_liquid = @liquid_market
+    @market.submarket = @liquid_market
 
     #liquidity compensation will be 0.5
-    @liquid_market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: 1, predictable_id: @market.id)
-    @liquid_market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: 1.5, predictable_id: @market.id)
-    @liquid_market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3 + i, last: 2.25, predictable_id: @market.id)
+    @liquid_market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 3, last: 1, predictable_id: @market.id)
+    @liquid_market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 2, last: 4, predictable_id: @market.id)
+    @liquid_market.exchange_rates << FactoryGirl.create(:exchange_rate, date: Date.today - 1, last: 5, predictable_id: @market.id)
 
     #TODO: I must safeguard against the case when the volume is 0
 
-    predicted_ex_rates = @market.liquid_submarket(@currency)
+    predicted_ex_rates = @market.illiquidity_prediction(@currency)
 
     2.times do |i|
-      expect(predicted_ex_rates[i].last).to eq(@currency.exchange_rates[i + 1].last + 0.5)
+      expect(predicted_ex_rates[i].last).to eq(@currency.exchange_rates[i + 1].last + 0.375)
       expect(predicted_ex_rates[i].date).to eq(@currency.exchange_rates[i + 1].date)
     end
   end

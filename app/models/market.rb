@@ -6,8 +6,9 @@ class Market < ActiveRecord::Base
 
   has_many :exchange_rates, as: :predictable
   has_many :currencies
-  has_one :market, as: liquid_submarket
-  belongs_to :market, as: supermarket
+
+  has_one :submarket, class_name: "Market", foreign_key: :supermarket_id
+  belongs_to :supermarket, class_name: "Market", foreign_key: :supermarket_id
 
   self.after_initialize do
     #get quotes for american market
@@ -35,9 +36,11 @@ class Market < ActiveRecord::Base
     ers
   end
 
-  def get_beta(cr_var, mr_var)
-    var = mr_var.variance_population
-    cov = Statsample::Bivariate.covariance(cr_var, mr_var)
+  def get_beta(cr_val, mr_val)
+    var = mr_val.variance_population
+    cov = Statsample::Bivariate.covariance(cr_val, mr_val)
+    p "var is #{var}"
+    p "cov is #{cov}"
 
     if(var != 0)
       beta = cov/var
@@ -48,6 +51,7 @@ class Market < ActiveRecord::Base
     end
     beta
   end
+
 
   def capm_prediction(currency)
     cr_var = currency.get_variation.to_scale
@@ -64,6 +68,28 @@ class Market < ActiveRecord::Base
       predicted_ex_rates << ExchangeRate.create(last: currency_rate.last*(1 + value), date: last_date + i.days, predicted: true)
     end
     predicted_ex_rates
+  end
+
+
+  def illiquidity_prediction(currency)
+    ill_premium = self.last_expected_return - self.submarket.last_expected_return
+
+    size = currency.exchange_rates.size
+
+    ill_beta = get_beta(currency.exchange_rates.collect{|er| er.volume}.to_scale,
+                        self.exchange_rates.last(size).collect{|er| er.volume}.to_scale)
+
+    capm_pred = capm_prediction(currency)
+    #we add illiquidity factor to the capm
+    capm_pred.each do |er|
+      er.last += ill_premium * ill_beta
+    end
+    capm_pred
+  end
+
+  def last_expected_return
+    last_two_ers = self.exchange_rates.last(2)
+    (last_two_ers[1].last - last_two_ers[0].last)/last_two_ers[0].last
   end
 
 end
