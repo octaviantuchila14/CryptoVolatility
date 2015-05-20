@@ -11,7 +11,8 @@ class MarketsController < ApplicationController
   # GET /markets/1.json
   def show
     @pred_currency = Currency.find_by(id: params[:currency_id])
-    @predicted_exchange_rates = @market.capm_prediction(@pred_currency)
+    @capm_ers = @market.capm_prediction(@pred_currency)
+    @ill_ers = @market.illiquidity_prediction(@pred_currency)
   end
 
   # GET /markets/new

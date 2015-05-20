@@ -37,10 +37,9 @@ class Market < ActiveRecord::Base
   end
 
   def get_beta(cr_val, mr_val)
-    var = mr_val.variance_population
+
     cov = Statsample::Bivariate.covariance(cr_val, mr_val)
-    p "var is #{var}"
-    p "cov is #{cov}"
+    var = mr_val.variance_population
 
     if(var != 0)
       beta = cov/var

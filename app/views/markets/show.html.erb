@@ -5,7 +5,9 @@
 <%= "Currency Historic data" %>
 <%= line_chart exchange_rates_as_hash(@pred_currency.exchange_rates) %>
 <%= "CAPM estimation" %>
-<%= line_chart exchange_rates_as_hash(@predicted_exchange_rates) %>
+<%= line_chart exchange_rates_as_hash(@capm_ers) %>
+<%= "Illiquidity adjusted estimation" %>
+<%= line_chart exchange_rates_as_hash(@ill_ers) %>
 
 <%= link_to 'Edit', edit_market_path(@market) %> |
 <%= link_to 'Back', markets_path %>
