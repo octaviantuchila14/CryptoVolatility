@@ -1,6 +1,6 @@
 namespace :download_csv do
   coins = ["btc", "ltc", "nmc", "nvc", "ppc"]
-  full_names = {"btc": "Bitcoin", "ltc": "Litecoin", "nmc": "Namecoin", "nvc": "Novacoin", "ppc": "Peercoin"}.with_indifferent_access
+  full_names = {"btc" => "Bitcoin", "ltc" => "Litecoin", "nmc" => "Namecoin", "nvc" => "Novacoin", "ppc" => "Peercoin"}.with_indifferent_access
   ref_coin = "usd"
 
   task get_files: :environment do
@@ -22,12 +22,7 @@ namespace :download_csv do
       label_str = coin + "_" + ref_coin
       data =  SmarterCSV.process(Rails.root.join('tmp', 'csvFiles', label_str + '.csv').to_s)
 
-      p "symbol" + full_names[:btc]
-      p "string " + full_names["btc"]
       currency = Currency.create(name: coin, full_name: full_names[coin])
-      p "name is: " + currency.name
-      p "full name is: " + currency.full_name
-      p Currency.all.size
       data.each do |rate|
         extracted_date = Date.new(rate[:date].to_s[0..3].to_i, rate[:date].to_s[4..5].to_i, rate[:date].to_s[6..7].to_i)
         #keep only rates for weekdays
