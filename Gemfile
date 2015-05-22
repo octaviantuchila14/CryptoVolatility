@@ -89,3 +89,6 @@ gem 'database_cleaner'
 
 #for curl to altcoin19
 gem 'curb'
+
+#for executing rake tasks from code
+gem 'rake'

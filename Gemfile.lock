@@ -257,6 +257,7 @@ DEPENDENCIES
   rails (= 4.2.1)
   rails-erd
   rails_12factor
+  rake
   rspec-rails (~> 3.0)
   ruby-fann (~> 1.2.6)
   sass-rails (~> 5.0)
