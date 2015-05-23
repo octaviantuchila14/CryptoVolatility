@@ -1,21 +1,22 @@
 class Portfolio < ActiveRecord::Base
   validate :valid_time_interval?
+  validates :max_return, presence: true
+
+  before_validation :compute_max_return, on: :create
 
   def valid_time_interval?
     start_date < end_date && end_date < Date.today
   end
 
-  self.after_initialize do
+  def compute_max_return
     biggest_return = 0
 
     currencies = Currency.all
     currencies.each do |cr|
-      start_date = ExchangeRate.where(date: start_date, predictable_id: cr.id).first
-      end_date = ExchangeRate.where(date: end_date, predictable_id: cr.id).first
-      p start_date
-      p end_date
-      if(start_date != nil && end_date != nil && end_date.last - start_date.last > biggest_return)
-        biggest_return = end_date.last - start_date.last
+      start_rate = ExchangeRate.where(date: self.start_date, predictable_id: cr.id).first
+      end_rate = ExchangeRate.where(date: self.end_date, predictable_id: cr.id).first
+      if(start_rate != nil && end_rate != nil && end_rate.last - start_rate.last > biggest_return)
+        biggest_return = end_rate.last - start_rate.last
       end
     end
 

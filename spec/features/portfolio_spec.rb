@@ -7,10 +7,18 @@ describe 'My behaviour' do
     expect(page).to have_content 'Create new portfolio'
   end
 
+  it 'should display an option for returns, but the returns can\' be greater than the maximum return' do
+    portfolio = FactoryGirl.create(:portfolio)
+    visit "/portfolios/#{portfolio.id}"
+    fill_in ''
+    click_button 'Input return'
+  end
+
   # it 'should display an option for returns' do
-  #
   #   portfolio = FactoryGirl.create(:portfolio)
-  #   expect(portfolio.max_return > 0)
+  #   visit "/portfolios/#{portfolio.id}"
+  #   click_button
   # end
+
 
 end
