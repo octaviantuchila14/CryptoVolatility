@@ -1,0 +1,28 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  Create new portfolio
+</p>
+
+<p>
+  <strong>Start date:</strong>
+  <%= @portfolio.start_date %>
+</p>
+
+<p>
+  <strong>End date:</strong>
+  <%= @portfolio.end_date %>
+</p>
+
+<p>
+  <strong>P maximum return:</strong>
+  <%= @portfolio.max_return %>
+</p>
+
+<p>
+  <strong>Variance:</strong>
+  <%= @portfolio.variance %>
+</p>
+
+<%= link_to 'Edit', edit_portfolio_path(@portfolio) %> |
+<%= link_to 'Back', portfolios_path %>

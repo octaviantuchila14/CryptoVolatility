@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150520111546) do
+ActiveRecord::Schema.define(version: 20150523170513) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,16 @@ ActiveRecord::Schema.define(version: 20150520111546) do
     t.integer  "max_nr_of_days"
     t.integer  "predictable_id"
     t.string   "predictable_type"
+  end
+
+  create_table "portfolios", force: :cascade do |t|
+    t.date     "start_date"
+    t.date     "end_date"
+    t.float    "p_return"
+    t.float    "variance"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.float    "max_return"
   end
 
   create_table "predictions", force: :cascade do |t|
