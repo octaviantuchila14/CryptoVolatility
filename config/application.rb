@@ -26,10 +26,10 @@ module IndividualProject
 
     config.after_initialize do
 
-      IndividualProject::Application.load_tasks
+      #IndividualProject::Application.load_tasks
       #load File.join(Rails.root, 'lib', 'tasks', 'download_csv.rake')
-      Rake::Task[ 'download_csv:get_files' ].invoke
-      Rake::Task[ 'download_csv:place_in_database' ].invoke
+      #Rake::Task[ 'download_csv:get_files' ].invoke
+      #Rake::Task[ 'download_csv:place_in_database' ].invoke
     end
   end
 
