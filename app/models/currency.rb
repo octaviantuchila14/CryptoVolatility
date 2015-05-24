@@ -8,6 +8,7 @@ class Currency < ActiveRecord::Base
   has_one :prediction, as: :predictable
   has_many :exchange_rates, as: :predictable
   belongs_to :market
+  has_and_belongs_to_many :portfolios
 
   enum prediction_type: [:neural_network, :capm]
 
@@ -36,6 +37,28 @@ class Currency < ActiveRecord::Base
       end
     end
     variations
+  end
+
+  def return_between(start_date, end_date)
+    er_start = ExchangeRate.where(date: start_date, predictable: self).first
+    er_end = ExchangeRate.where(date: end_date, predictable: self).first
+    if(er_start == nil || er_end == nil)
+      return nil
+    end
+    (er_end.last - er_start.last)/er_start.last
+  end
+
+  def all_returns(start_date, end_date)
+    returns = []
+    ers = ExchangeRate.where(date: start_date..end_date, predictable: self)
+    pp ers
+    ers.each_index do |i|
+      pp ers[i]
+      if(i > 0)
+        returns << (ers[i].last - ers[i - 1].last)/ers[i - 1].last
+      end
+    end
+    returns
   end
 
 end

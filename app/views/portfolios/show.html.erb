@@ -15,27 +15,48 @@
 </p>
 
 <p>
-  <strong>P maximum return:</strong>
+  <strong>Portfolio maximum return:</strong>
   <%= @portfolio.max_return %>
 </p>
 
 <div id="return_p" >
+    <%=form_for @portfolio do |f| %>
+          <% if @portfolio.errors.any? %>
+              <div id="error_explanation">
+                <h2><%= pluralize(@portfolio.errors.count, "error") %> prohibited this portfolio from being saved:</h2>
+                <ul>
+                  <% @portfolio.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+          <% end %>
+        <%= f.label "Portfolio Return" %>
+        <%= f.number_field(:p_return, id:"return_number") %>
+        <%= f.submit "Obtain optimal portfolio", class: "btn btn-primary" %>
+    <% end %>
+</div>
 
-<%=form_for @portfolio do |f| %>
-      <% if @portfolio.errors.any? %>
-          <div id="error_explanation">
-            <h2><%= pluralize(@portfolio.errors.count, "error") %> prohibited this portfolio from being saved:</h2>
-            <ul>
-              <% @portfolio.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-      <% end %>
-    <%= f.label "Portfolio Return" %>
-    <%= f.number_field(:p_return, id:"return_number") %>
-    <%= f.submit "Obtain optimal portfolio", class: "btn btn-primary" %>
-<% end %>
+<div id="computed_portfolio">
+  <% if(@portfolio.p_return != nil) %>
+      <strong>Optimal Variance:</strong>
+      <%= @portfolio.variance %>
+      <strong>Our portfolio will have the following currencies with their respective weights</strong>
+
+      <table id="wt">
+        <tr>
+          <th>Currency</th>
+          <th>Weight</th>
+        </tr>
+        <% weights = @portfolio.compute_weights %>
+        <% @portfolio.currencies do |cr| %>
+            <tr>
+              <td class="full_name"><%= cr.name %></td>
+              <td class="weight"><%= weights[cr] %></td>
+            </tr>
+        <% end %>
+      </table>
+    <% end %>
 </div>
 
 

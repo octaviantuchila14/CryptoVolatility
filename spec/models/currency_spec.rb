@@ -23,21 +23,24 @@ RSpec.describe Currency, type: :model do
     expect(cr.get_variation).to eq([5, 15])
   end
 
-=begin
-  it "predicts the future evolution of the cryptocurrency" do
-    expectedRates = []
-    (0..9).each do |i|
-      expectedRates << FactoryGirl.create(:exchange_rate, date: Date.today - i)
+  it "returns the differences between two days" do
+    cr = FactoryGirl.create(:currency)
+    (0..2).each do |i|
+      er = FactoryGirl.create(:exchange_rate, last: i + 1, date: Date.today - i.days)
+      cr.exchange_rates << er
     end
-
-    currency = FactoryGirl.create(:currency)
-    market = FactoryGirl.create(:market)
-
-    predicted_rates = currency.predict(1, market, 'usd')
-    expect(predicted_rates.size).to eq(1)
-    expect(predicted_rates[:accuracy]).to be between(0, 1)
-    expect(predicted_rates[:precision]).to be between(0, 1)
-    expect(predicted_rates[:f1]).to be between(0, 1)
+    expect(cr.return_between(cr.exchange_rates.first.date, cr.exchange_rates.last.date)).to eq(2)
   end
-=end
+
+  it "returns all the daily returns" do
+    cr = FactoryGirl.create(:currency)
+    (0..2).each do |i|
+      er = FactoryGirl.create(:exchange_rate, last: i + 1, date: Date.today - i.days)
+      cr.exchange_rates << er
+    end
+    a_ret = cr.all_returns(cr.exchange_rates.first.date, cr.exchange_rates.last.date)
+    expect(a_ret[0]).to eq(1.0)
+    expect(a_ret[1]).to eq(0.5)
+  end
+
 end
