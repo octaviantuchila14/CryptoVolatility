@@ -19,7 +19,7 @@ describe 'My behaviour' do
     expect(page).to have_content 'Create new portfolio'
   end
 
-  it 'should display an option for returns, but the returns can\' be greater than the maximum return' do
+  it 'should display an option for returns, but the returns can\'t be greater than the maximum return' do
     visit "/portfolios/#{@portfolio.id}"
     fill_in 'return_number', with: '3'
     click_button 'Obtain optimal portfolio'
@@ -28,6 +28,8 @@ describe 'My behaviour' do
 
   it 'should display an option for returns' do
     visit "/portfolios/#{@portfolio.id}"
+
+    fill_in 'return_number', with: '1'
     click_button 'Obtain optimal portfolio'
     expect(page).to have_content("Variance")
     expect(page).to have_content("Our portfolio will have the following currencies with their respective weights")
@@ -35,13 +37,16 @@ describe 'My behaviour' do
 
   it 'should compute the weights for a set of currencies' do
     visit "/portfolios/#{@portfolio.id}"
+
+    fill_in 'return_number', with: '2'
     click_button 'Obtain optimal portfolio'
+
     expect(page.all('table#wt tr').count).to eq(2 + 1)
 
     nm = page.all('table#wt td.full_name').map(&:text)
     expect(nm).to include("Bitcoin", "Litecoin")
     weights = page.all('table#wt td.weight').map(&:text)
-    expect(weights).to include("100%", "0%")
+    expect(weights).to include("100.000%", "0.000%")
   end
 
 end

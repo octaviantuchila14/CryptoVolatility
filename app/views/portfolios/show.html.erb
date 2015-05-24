@@ -38,21 +38,22 @@
 </div>
 
 <div id="computed_portfolio">
-  <% if(@portfolio.p_return != nil) %>
+  <% if(@portfolio.p_return != nil && @portfolio.p_return.between?(0, @portfolio.max_return)) %>
       <strong>Optimal Variance:</strong>
       <%= @portfolio.variance %>
       <strong>Our portfolio will have the following currencies with their respective weights</strong>
+
+      <% weights = @portfolio.compute_weights %>
 
       <table id="wt">
         <tr>
           <th>Currency</th>
           <th>Weight</th>
         </tr>
-        <% weights = @portfolio.compute_weights %>
-        <% @portfolio.currencies do |cr| %>
+        <% @portfolio.currencies.each do |cr| %>
             <tr>
-              <td class="full_name"><%= cr.name %></td>
-              <td class="weight"><%= weights[cr] %></td>
+              <td class="full_name"><%= cr.full_name %></td>
+              <td class="weight"><%= number_to_percentage(weights[cr] * 100) %></td>
             </tr>
         <% end %>
       </table>

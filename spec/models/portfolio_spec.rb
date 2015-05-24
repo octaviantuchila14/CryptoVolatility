@@ -25,4 +25,18 @@ RSpec.describe Portfolio, type: :model do
     expect(weights[@c2]).to eq(0)
   end
 
+  # it 'minimizes the portfolio selection - slightly more complex example' do
+  #   @c1.exchange_rates[0].last = 4
+  #   @c1.exchange_rates[1].last = 5
+  #   @c1.exchange_rates[2].last = 6
+  #   @c2.exchange_rates[0].last = 4
+  #   @c2.exchange_rates[1].last = 3
+  #   @c2.exchange_rates[2].last = 2
+  #
+  #   @portfolio.p_return = 0.0
+  #   weights = @portfolio.compute_weights
+  #   expect(weights[@c1]).to be within(0...1)
+  #   expect(weights[@c2]).to be within(0...1)
+  # end
+
 end

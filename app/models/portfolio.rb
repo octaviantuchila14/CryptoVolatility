@@ -15,8 +15,10 @@ class Portfolio < ActiveRecord::Base
   end
 
   def return_between_zero_and_max_return?
-    unless(0 <= p_return && p_return <= max_return)
-      errors.add(:p_return, "The return is not between 0 and the max return")
+    if(p_return != nil)
+      unless(0 <= p_return && p_return <= max_return)
+        errors.add(:p_return, "The return is not between 0 and the max return")
+      end
     end
   end
 
@@ -46,6 +48,7 @@ class Portfolio < ActiveRecord::Base
         all_returns << cr.all_returns(self.start_date, self.end_date)
       end
     end
+    pp all_returns
 
     m = Matrix.build(self.currencies.size + 2, self.currencies.size + 2)
     #do linear computation
@@ -75,6 +78,15 @@ class Portfolio < ActiveRecord::Base
     (0..self.currencies.size - 1).each do |i|
       weights[self.currencies[i]] = weights_vector[i, 0]
     end
+
+    #compute variance
+    (0..self.currencies.size - 1).each do |i|
+      (0..self.currencies.size - 1).each do |j|
+        self.variance += weights_vector[i, 0] * weights_vector[j, 0] * m[i, j]
+      end
+    end
+    self.variance = self.variance*2
+    #finished computing its variance
 
     weights
   end
