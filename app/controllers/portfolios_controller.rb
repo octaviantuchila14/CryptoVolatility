@@ -45,7 +45,7 @@ class PortfoliosController < ApplicationController
         format.html { redirect_to @portfolio, notice: 'Portfolio was successfully updated.' }
         format.json { render :show, status: :ok, location: @portfolio }
       else
-        format.html { render :edit }
+        format.html { render :show }
         format.json { render json: @portfolio.errors, status: :unprocessable_entity }
       end
     end

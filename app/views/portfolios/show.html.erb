@@ -19,10 +19,25 @@
   <%= @portfolio.max_return %>
 </p>
 
-<p>
-  <strong>Variance:</strong>
-  <%= @portfolio.variance %>
-</p>
+<div id="return_p" >
+
+<%=form_for @portfolio do |f| %>
+      <% if @portfolio.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@portfolio.errors.count, "error") %> prohibited this portfolio from being saved:</h2>
+            <ul>
+              <% @portfolio.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+      <% end %>
+    <%= f.label "Portfolio Return" %>
+    <%= f.number_field(:p_return, id:"return_number") %>
+    <%= f.submit "Obtain optimal portfolio", class: "btn btn-primary" %>
+<% end %>
+</div>
+
 
 <%= link_to 'Edit', edit_portfolio_path(@portfolio) %> |
 <%= link_to 'Back', portfolios_path %>
