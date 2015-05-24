@@ -8,7 +8,9 @@ class Currency < ActiveRecord::Base
   has_one :prediction, as: :predictable
   has_many :exchange_rates, as: :predictable
   belongs_to :market
-  has_and_belongs_to_many :portfolios
+
+  has_many :currencies_portfolios
+  has_many :portfolios, through: :currencies_portfolios
 
   enum prediction_type: [:neural_network, :capm]
 
@@ -50,10 +52,8 @@ class Currency < ActiveRecord::Base
 
   def all_returns(start_date, end_date)
     returns = []
-    ers = ExchangeRate.where(date: start_date..end_date, predictable: self)
-    pp ers
+    ers = ExchangeRate.where(date: (start_date - 1.days)..(end_date + 1.days), predictable: self)
     ers.each_index do |i|
-      pp ers[i]
       if(i > 0)
         returns << (ers[i].last - ers[i - 1].last)/ers[i - 1].last
       end

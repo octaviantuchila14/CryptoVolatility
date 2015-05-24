@@ -22,7 +22,7 @@ RSpec.describe Portfolio, type: :model do
     @portfolio.p_return = 2.0
     weights = @portfolio.compute_weights
     expect(weights[@c1]).to eq(1)
-    expect(weights[@c1]).to eq(0)
+    expect(weights[@c2]).to eq(0)
   end
 
 end

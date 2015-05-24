@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150524114751) do
+ActiveRecord::Schema.define(version: 20150524160951) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,13 +26,19 @@ ActiveRecord::Schema.define(version: 20150524114751) do
     t.integer  "market_id"
   end
 
-  create_table "currencies_portfolios", force: :cascade do |t|
-    t.integer "portfolios_id"
-    t.integer "currencies_id"
+  create_table "currencies_porfolios", force: :cascade do |t|
+    t.integer  "currency_id"
+    t.integer  "portfolio_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
-  add_index "currencies_portfolios", ["currencies_id"], name: "index_currencies_portfolios_on_currencies_id", using: :btree
-  add_index "currencies_portfolios", ["portfolios_id"], name: "index_currencies_portfolios_on_portfolios_id", using: :btree
+  create_table "currencies_portfolios", force: :cascade do |t|
+    t.integer  "currency_id"
+    t.integer  "portfolio_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
 
   create_table "exchange_rates", force: :cascade do |t|
     t.float    "last"

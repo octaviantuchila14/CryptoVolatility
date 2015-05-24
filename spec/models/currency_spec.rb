@@ -35,7 +35,7 @@ RSpec.describe Currency, type: :model do
   it "returns all the daily returns" do
     cr = FactoryGirl.create(:currency)
     (0..2).each do |i|
-      er = FactoryGirl.create(:exchange_rate, last: i + 1, date: Date.today - i.days)
+      er = FactoryGirl.create(:exchange_rate, last: i + 1, date: Date.today - (3 - i).days)
       cr.exchange_rates << er
     end
     a_ret = cr.all_returns(cr.exchange_rates.first.date, cr.exchange_rates.last.date)
