@@ -47,6 +47,7 @@ class Currency < ActiveRecord::Base
     if(er_start == nil || er_end == nil)
       return nil
     end
+    pp "er end is #{er_end.last}, er start is #{er_start.last}"
     (er_end.last - er_start.last)/er_start.last
   end
 

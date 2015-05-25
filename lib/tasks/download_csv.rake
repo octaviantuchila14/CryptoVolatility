@@ -27,7 +27,7 @@ namespace :download_csv do
         extracted_date = Date.new(rate[:date].to_s[0..3].to_i, rate[:date].to_s[4..5].to_i, rate[:date].to_s[6..7].to_i)
         #keep only rates for weekdays
         if([0,6].include?(extracted_date.wday) == false)
-          currency.exchange_rates << ExchangeRate.create(last: rate[:date], volume: rate[:volume], predicted: currency, date: extracted_date,
+          currency.exchange_rates << ExchangeRate.create(last: rate[:last], volume: rate[:volume], predicted: currency, date: extracted_date,
                                                         subject: coin, ref_cr: ref_coin)
         end
       end

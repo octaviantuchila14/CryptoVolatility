@@ -48,7 +48,7 @@ describe 'My behaviour' do
       expect(nm).to include("Bitcoin", "Litecoin")
       weights = page.all('table#wt td.weight').map(&:text)
       pp "the weights in the feature test are #{@portfolio.weights}"
-      expect(weights).to include("100.000%", "0.000%")
+      expect(weights).to include("1.0", "0.0")
     end
 
   end

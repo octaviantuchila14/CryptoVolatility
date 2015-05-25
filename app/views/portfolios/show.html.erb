@@ -55,13 +55,16 @@
         <% @portfolio.currencies.each do |cr| %>
             <tr>
               <td class="full_name"><%= cr.full_name %></td>
-              <td class="weight"><%= @portfolio.weights[cr.full_name] %></td>
+              <td class="weight"><%= number_to_percentage(@portfolio.weights[cr.full_name].to_f * 100) %></td>
             </tr>
         <% end %>
       </table>
 
       <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
-      <%= pie_chart @portfolio.weights %>
+      <% if(@portfolio.weights.values.all? {|w| w.to_f > 0})%>
+        <%= pie_chart @portfolio.weights %>
+      <% end %>
+      <%= column_chart @portfolio.weights %>
   <% end %>
 </div>
 

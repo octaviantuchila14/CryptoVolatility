@@ -28,6 +28,8 @@ class Portfolio < ActiveRecord::Base
     currencies = Currency.all
     currencies.each do |cr|
       cr_return = cr.return_between(self.start_date, self.end_date)
+      pp "the current currency is #{cr.full_name}"
+      pp cr_return
       if(cr_return != nil && cr_return > biggest_return)
         biggest_return = cr_return
       end
@@ -36,17 +38,23 @@ class Portfolio < ActiveRecord::Base
     self.max_return = biggest_return
   end
 
-  def compute_weights
-    overall_returns = []
-    all_returns = []
-
+  def select_currencies
+    @overall_returns = []
+    @all_returns = []
     Currency.all.each do |cr|
       ri = cr.return_between(self.start_date, self.end_date)
       if(ri != nil)
-        overall_returns << ri
+        @overall_returns << ri
         self.currencies << cr
-        all_returns << cr.all_returns(self.start_date, self.end_date)
+        @all_returns << cr.all_returns(self.start_date, self.end_date)
       end
+    end
+  end
+
+  def compute_weights
+
+    if(self.currencies.empty?)
+      select_currencies
     end
 
     self.weights = {}
@@ -69,14 +77,14 @@ class Portfolio < ActiveRecord::Base
         if(i == j)
           m[i, j] = 1.0
         else
-          m[i, j] = Statsample::Bivariate.covariance(all_returns[i].to_scale, all_returns[j].to_scale)
+          m[i, j] = Statsample::Bivariate.covariance(@all_returns[i].to_scale, @all_returns[j].to_scale)
         end
       end
     end
     (0..self.currencies.size - 1).each do |k|
-      m[self.currencies.size, k] = -overall_returns[k]
+      m[self.currencies.size, k] = -@overall_returns[k]
       m[self.currencies.size + 1, k] = -1.0
-      m[k, self.currencies.size] = -overall_returns[k]
+      m[k, self.currencies.size] = -@overall_returns[k]
       m[k, self.currencies.size + 1] = -1.0
     end
 
