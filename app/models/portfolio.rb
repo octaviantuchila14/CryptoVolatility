@@ -48,7 +48,15 @@ class Portfolio < ActiveRecord::Base
         all_returns << cr.all_returns(self.start_date, self.end_date)
       end
     end
-    pp all_returns
+
+    weights = {}
+    #special case when there is only one currency
+    if(self.currencies.size == 1)
+      cr = self.currencies.first
+      self.variance = cr.get_variance(self.start_date, self.end_date)
+      weights[cr] = 1.0
+      return weights
+    end
 
     m = Matrix.build(self.currencies.size + 2, self.currencies.size + 2)
     #do linear computation
@@ -72,9 +80,11 @@ class Portfolio < ActiveRecord::Base
     v[self.currencies.size, 0] = -self.p_return
     v[self.currencies.size + 1, 0] = -1.0
 
+    pp "matrix m is #{m}"
+    pp "matrix v is #{v}"
+
     weights_vector = m.inverse * v
 
-    weights = {}
     (0..self.currencies.size - 1).each do |i|
       weights[self.currencies[i]] = weights_vector[i, 0]
     end
