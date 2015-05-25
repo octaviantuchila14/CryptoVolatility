@@ -49,13 +49,17 @@ class Portfolio < ActiveRecord::Base
       end
     end
 
-    weights = {}
+    self.weights = {}
     #special case when there is only one currency
     if(self.currencies.size == 1)
       cr = self.currencies.first
       self.variance = cr.get_variance(self.start_date, self.end_date)
-      weights[cr.full_name] = 1.0
-      return weights
+      self.weights[cr.full_name] = 1.0
+
+      self.weights_will_change!
+      self.save
+
+      return self.weights
     end
 
     m = Matrix.build(self.currencies.size + 2, self.currencies.size + 2)
@@ -83,7 +87,7 @@ class Portfolio < ActiveRecord::Base
     weights_vector = m.inverse * v
 
     (0..self.currencies.size - 1).each do |i|
-      weights[self.currencies[i].full_name] = weights_vector[i, 0]
+      self.weights[self.currencies[i].full_name] = weights_vector[i, 0]
     end
 
     #compute variance
@@ -95,7 +99,11 @@ class Portfolio < ActiveRecord::Base
     self.variance = self.variance*2
     #finished computing its variance
 
-    weights
+    pp "in the model, the weights have been computed #{self.weights}"
+    self.weights_will_change!
+    self.save
+
+    self.weights
   end
 
 end

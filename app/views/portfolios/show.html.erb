@@ -41,9 +41,6 @@
 <div id="computed_portfolio">
   <% if(@portfolio.p_return != nil && @portfolio.p_return.between?(0, @portfolio.max_return)) %>
 
-      <% #also computes the variance, needs to be before it%>
-      <% weights = @portfolio.compute_weights %>
-
       <strong>Optimal Variance:</strong>
       <%= @portfolio.variance %>
       <br>
@@ -58,13 +55,13 @@
         <% @portfolio.currencies.each do |cr| %>
             <tr>
               <td class="full_name"><%= cr.full_name %></td>
-              <td class="weight"><%= number_to_percentage(weights[cr.full_name] * 100) %></td>
+              <td class="weight"><%= @portfolio.weights[cr.full_name] %></td>
             </tr>
         <% end %>
       </table>
 
       <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
-      <%= pie_chart weights %>
+      <%= pie_chart @portfolio.weights %>
   <% end %>
 </div>
 

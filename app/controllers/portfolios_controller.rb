@@ -10,6 +10,8 @@ class PortfoliosController < ApplicationController
   # GET /portfolios/1
   # GET /portfolios/1.json
   def show
+    pp "in show, weights have been computed #{@portfolio.weights}"
+    pp @portfolio
   end
 
   # GET /portfolios/new
@@ -42,10 +44,12 @@ class PortfoliosController < ApplicationController
   def update
     respond_to do |format|
       if @portfolio.update(portfolio_params)
+        @portfolio.compute_weights
+        pp "in update, weights have been computed #{@portfolio.weights}"
         format.html { redirect_to @portfolio, notice: 'Portfolio was successfully updated.' }
         format.json { render :show, status: :ok, location: @portfolio }
       else
-        format.html { render :show }
+        format.html { render :show}
         format.json { render json: @portfolio.errors, status: :unprocessable_entity }
       end
     end
