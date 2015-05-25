@@ -26,13 +26,6 @@ ActiveRecord::Schema.define(version: 20150525103332) do
     t.integer  "market_id"
   end
 
-  create_table "currencies_porfolios", force: :cascade do |t|
-    t.integer  "currency_id"
-    t.integer  "portfolio_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-  end
-
   create_table "currencies_portfolios", force: :cascade do |t|
     t.integer  "currency_id"
     t.integer  "portfolio_id"

@@ -62,6 +62,7 @@ class Currency < ActiveRecord::Base
   end
 
   def get_variance(start_date, end_date)
+    p "in the currency controller, the returns are #{all_returns(start_date, end_date)}"
     all_returns(start_date, end_date).to_scale.variance_population
   end
 
