@@ -1,6 +1,9 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Listing Currencies</h1>
+<h1> Cryptocurrency Analytics </h1>
+
+<br><text>Click on any of the currencies to view individual analytics
+    as well as machine learning predictions.</text><br>
 
 <table>
   <thead>
@@ -15,12 +18,15 @@
       <tr>
         <td><%= currency.full_name %></td>
         <td><%= link_to 'Show', currency %></td>
-        <td><%= link_to 'Edit', edit_currency_path(currency) %></td>
-        <td><%= link_to 'Destroy', currency, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
+
+
+<br><br><br><text>
+  Click to construct your own portfolio of cryptocurrencies, between two past dates and with your desired rate of return
+</text><br>
 
 <p>
   Portfolio selection
@@ -28,5 +34,3 @@
 </p>
 
 <br>
-
-<%= link_to 'New Currency', new_currency_path %>

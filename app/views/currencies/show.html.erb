@@ -2,11 +2,26 @@
 
 <p>
   <strong>Name:</strong>
-  <%= @currency.name %>
+  <%= @currency.full_name %>
 </p>
 
+<br><text>
+  See how financial models have done in estimating the past values of cryptocurrencies.
+</text><br>
+
 <%=form_for @currency do |f| %>
-    <%= f.label "Days" %>
+    <%= f.label "Financial predictions" %>
+    <%= f.hidden_field :prediction_type, value: :capm%>
+    <%= f.submit "Apply financial models", class: "btn btn-primary" %>
+<% end %>
+
+
+<br><text>
+  Get future predictions using machine learning.
+</text><br>
+
+<%=form_for @currency do |f| %>
+    <%= f.label "Machine Learning future predictions" %>
     <div id="select_days" >
     <%= f.select(:prediction_days, options_for_select(1..30)) %>
     </div>
@@ -14,10 +29,4 @@
     <%= f.submit "Predict", class: "btn btn-primary" %>
 <% end %>
 
-<%=form_for @currency do |f| %>
-    <%= f.hidden_field :prediction_type, value: :capm%>
-    <%= f.submit "Apply financial models", class: "btn btn-primary" %>
-<% end %>
-
-<%= link_to 'Edit', edit_currency_path(@currency) %> |
-<%= link_to 'Back', currencies_path %>
+<%= link_to 'Back to main page', currencies_path %>

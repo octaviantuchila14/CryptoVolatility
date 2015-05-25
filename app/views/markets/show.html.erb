@@ -1,13 +1,30 @@
 <p id="notice"><%= notice %></p>
 
+<text>
+    The data listed below shows how the currency's price has evolved for the given time period,
+    and how accurate classic financial theories have been in predicting it.
+</text>
+
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 
 <%= "Currency Historic data" %>
 <%= line_chart exchange_rates_as_hash(@pred_currency.exchange_rates) %>
+
+<text>
+  The Capital Asset Pricing Model(CAPM) is one of the most well known models for estimating the value of an asset.
+  It measures how risky the asset is and predicts a return depending on the overall market return.
+</text>
+
 <%= "CAPM estimation" %>
 <%= line_chart exchange_rates_as_hash(@capm_ers) %>
+
+<text>
+  CAPM is often adjusted to take into account the illiquidity of an asset, asking it for a bigger return if it is illiquid.
+</text>
+
 <%= "Illiquidity adjusted estimation" %>
 <%= line_chart exchange_rates_as_hash(@ill_ers) %>
 
-<%= link_to 'Edit', edit_market_path(@market) %> |
-<%= link_to 'Back', markets_path %>
+
+<%= link_to 'Back to the currency\'s page', currency_path(@pred_currency)%>
+<%= link_to 'Back to main page', currencies_path %>
