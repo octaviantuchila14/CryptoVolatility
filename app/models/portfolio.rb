@@ -41,6 +41,7 @@ class Portfolio < ActiveRecord::Base
   def select_currencies
     @overall_returns = []
     @all_returns = []
+    self.currencies = []
     Currency.all.each do |cr|
       ri = cr.return_between(self.start_date, self.end_date)
       if(ri != nil)
@@ -53,9 +54,7 @@ class Portfolio < ActiveRecord::Base
 
   def compute_weights
 
-    if(self.currencies.empty?)
-      select_currencies
-    end
+    select_currencies
 
     self.weights = {}
     #special case when there is only one currency
