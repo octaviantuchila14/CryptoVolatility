@@ -55,7 +55,7 @@ class Market < ActiveRecord::Base
   def capm_prediction(currency)
     cr_var = currency.get_variation.to_scale
     mr_var = get_variation(cr_var.size + 1).to_scale
-    last_date = Date.today - cr_var.size.days
+    last_date = currency.exchange_rates.sort_by {|er| er.date}.first.date
 
     beta = get_beta(cr_var, mr_var)
     expected_returns = get_expected_returns(currency.exchange_rates)
@@ -68,6 +68,7 @@ class Market < ActiveRecord::Base
         predicted_ex_rates << ExchangeRate.create(last: currency_rate.last*(1 + value), date: last_date + i.days, predicted: true)
       end
     end
+
     predicted_ex_rates
   end
 

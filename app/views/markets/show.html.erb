@@ -9,7 +9,7 @@
 
 <%= "Currency Historic data" %>
 <% pp "exchange rates for predicted currency #{@pred_currency.full_name}, are #{@pred_currency.exchange_rates.size}"%>
-<%= line_chart exchange_rates_as_hash(@pred_currency.exchange_rates) %>
+<%= line_chart exchange_rates_as_hash(@pred_currency.exchange_rates.drop(1)) %>
 
 <text>
   The Capital Asset Pricing Model(CAPM) is one of the most well known models for estimating the value of an asset.
