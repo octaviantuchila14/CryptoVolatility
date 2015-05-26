@@ -8,6 +8,7 @@
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 
 <%= "Currency Historic data" %>
+<% pp "exchange rates for predicted currency #{@pred_currency.full_name}, are #{@pred_currency.exchange_rates.size}"%>
 <%= line_chart exchange_rates_as_hash(@pred_currency.exchange_rates) %>
 
 <text>

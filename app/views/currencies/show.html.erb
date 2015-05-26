@@ -10,7 +10,6 @@
 </text><br>
 
 <%=form_for @currency do |f| %>
-    <%= f.label "Financial predictions" %>
     <%= f.hidden_field :prediction_type, value: :capm%>
     <%= f.submit "Apply financial models", class: "btn btn-primary" %>
 <% end %>
@@ -21,12 +20,11 @@
 </text><br>
 
 <%=form_for @currency do |f| %>
-    <%= f.label "Machine Learning future predictions" %>
     <div id="select_days" >
     <%= f.select(:prediction_days, options_for_select(1..30)) %>
     </div>
     <%= f.hidden_field :prediction_type, value: :neural_network%>
-    <%= f.submit "Predict", class: "btn btn-primary" %>
+    <%= f.submit "Machine Learning future predictions", class: "btn btn-primary" %>
 <% end %>
 
 <%= link_to 'Back to main page', currencies_path %>

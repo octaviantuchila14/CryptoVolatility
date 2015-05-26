@@ -1,5 +1,5 @@
 class ExchangeRate < ActiveRecord::Base
-  validates_presence_of :subject
+  validates_presence_of :predictable
   validates_presence_of :ref_cr
   validates_presence_of :last
   validates_presence_of :date

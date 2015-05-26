@@ -30,22 +30,35 @@ namespace :query_api do
 
   task get_market_data: :environment do
 
-    data = YahooFinance.historical_quotes("^GSPC", { raw: :false, start_date: Date.today - 365, period: :daily})
+    datasp500 = YahooFinance.historical_quotes("^GSPC", { raw: :false, start_date: Date.today - 600, period: :daily})
 
-    Market.where(name: "^GSPC").first_or_create
-    data.each do |daily_data|
-      exchange_rate = ExchangeRate.new
-      exchange_rate.subject = "^GSPC"
-      exchange_rate.ref_cr = 'usd'
-      exchange_rate.last = daily_data[:close]
-      exchange_rate.time = DateTime.now
+    marketsp500 = Market.where(name: "^GSPC").first_or_create
+    marketsp500.risk_free_rate = 0.0025
+    save_data(datasp500, marketsp500)
 
-      #check if I don't have rate already
-      if ExchangeRate.where(time: exchange_rate.time, predicted: false, subject: exchange_rate.subject).blank?
-        exchange_rate.save
+    datasp100 = YahooFinance.historical_quotes("^OEX", { raw: :false, start_date: Date.today - 600, period: :daily})
+    marketsp100 = Market.where(name: "^OEX").first_or_create
+    marketsp100.risk_free_rate = 0.0025
+    save_data(datasp100, marketsp100)
+
+    marketsp500.submarket = marketsp100
+  end
+
+    def save_data(data, market)
+      data.reverse_each do |daily_data|
+        exchange_rate = ExchangeRate.new
+        exchange_rate.predictable = market
+        exchange_rate.ref_cr = 'usd'
+        exchange_rate.last = daily_data[:close]
+        exchange_rate.date = Date.new(daily_data[:trade_date][0..3].to_i, daily_data[:trade_date][5..6].to_i, daily_data[:trade_date][8..9].to_i)
+
+        #check if I don't have rate already
+        if ExchangeRate.where(date: exchange_rate.date, predicted: false, predictable: market).blank?
+          exchange_rate.save
+          market.exchange_rates << exchange_rate
+        end
+
       end
-
-    end
   end
 
 end

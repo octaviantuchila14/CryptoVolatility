@@ -20,7 +20,7 @@ class Market < ActiveRecord::Base
     exchange_rates = self.exchange_rates.where(predicted: false).sort_by{|er| er.date}.last(size)
     exchange_rates.each_index do |index|
       if(index + 1 < exchange_rates.size)
-        variations << (exchange_rates[index + 1].last - exchange_rates[index].last)
+        variations << (exchange_rates[index + 1].last - exchange_rates[index].last)/exchange_rates[index].last
       end
     end
     variations
@@ -62,9 +62,11 @@ class Market < ActiveRecord::Base
 
     predicted_ex_rates = []
     expected_returns.each_index do |i|
-      value = self.risk_free_rate + beta*(expected_returns[i] - risk_free_rate)
       currency_rate = currency.exchange_rates.find_by(date: last_date + (i - 1).days)
-      predicted_ex_rates << ExchangeRate.create(last: currency_rate.last*(1 + value), date: last_date + i.days, predicted: true)
+      if(currency_rate != nil) #taking into account weekends
+        value = self.risk_free_rate + beta*(expected_returns[i] - risk_free_rate)
+        predicted_ex_rates << ExchangeRate.create(last: currency_rate.last*(1 + value), date: last_date + i.days, predicted: true)
+      end
     end
     predicted_ex_rates
   end
