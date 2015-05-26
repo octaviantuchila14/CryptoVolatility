@@ -10,6 +10,8 @@ class NeuralNetworksController < ApplicationController
   # GET /neural_networks/1
   # GET /neural_networks/1.json
   def show
+    @pred_currency = Currency.find_by(id: params[:currency_id])
+    @nn_ers = @neural_network.backpropagation_predictions(@pred_currency)
   end
 
   # GET /neural_networks/new

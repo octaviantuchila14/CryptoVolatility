@@ -52,7 +52,7 @@ class Market < ActiveRecord::Base
   end
 
 
-  def capm_prediction(currency)
+  def capm_prediction(currency, additional_value = 0)
     cr_var = currency.get_variation.to_scale
     mr_var = get_variation(cr_var.size + 1).to_scale
     last_date = currency.exchange_rates.sort_by {|er| er.date}.first.date
@@ -65,8 +65,9 @@ class Market < ActiveRecord::Base
       currency_rate = currency.exchange_rates.find_by(date: last_date + (i - 1).days)
       if(currency_rate != nil) #taking into account weekends
         value = self.risk_free_rate + beta*(expected_returns[i] - risk_free_rate)
-        predicted_ex_rates << ExchangeRate.create(last: currency_rate.last*(1 + value), date: last_date + i.days, predicted: true)
+        predicted_ex_rates << ExchangeRate.create(last: currency_rate.last*(1 + value + additional_value), date: last_date + i.days, predicted: true)
       end
+      pp "value is #{value} while additional value is #{additional_value}"
     end
 
     predicted_ex_rates
@@ -74,19 +75,18 @@ class Market < ActiveRecord::Base
 
 
   def illiquidity_prediction(currency)
-    ill_premium = self.last_expected_return - self.submarket.last_expected_return
+    ill_premium = 100*(self.last_expected_return - self.submarket.last_expected_return)
 
     size = currency.exchange_rates.size
 
     ill_beta = get_beta(currency.exchange_rates.collect{|er| er.volume}.to_scale,
                         self.exchange_rates.last(size).collect{|er| er.volume}.to_scale)
 
-    capm_pred = capm_prediction(currency)
-    #we add illiquidity factor to the capm
-    capm_pred.each do |er|
-      er.last += ill_premium * ill_beta
-    end
-    capm_pred
+    v = capm_prediction(currency, ill_premium*ill_beta)
+
+    pp "ill_beta is #{ill_beta} and ill_premium is #{ill_premium}"
+    pp "the market return is #{self.last_expected_return} while the submarket return is #{self.submarket.last_expected_return}"
+    v
   end
 
   def last_expected_return

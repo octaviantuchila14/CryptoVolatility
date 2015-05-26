@@ -1,5 +1,3 @@
-<p id="notice"><%= notice %></p>
-
 <p>
   <strong>Name:</strong>
   <%= @currency.full_name %>
@@ -20,9 +18,6 @@
 </text><br>
 
 <%=form_for @currency do |f| %>
-    <div id="select_days" >
-    <%= f.select(:prediction_days, options_for_select(1..30)) %>
-    </div>
     <%= f.hidden_field :prediction_type, value: :neural_network%>
     <%= f.submit "Machine Learning future predictions", class: "btn btn-primary" %>
 <% end %>
