@@ -55,17 +55,22 @@ class Market < ActiveRecord::Base
   def capm_prediction(currency, additional_value = 0)
     cr_var = currency.get_variation.to_scale
     mr_var = get_variation(cr_var.size + 1).to_scale
-    last_date = currency.exchange_rates.sort_by {|er| er.date}.first.date
+
+    begin_date = currency.exchange_rates.sort_by {|er| er.date}.first.date
+    end_date = currency.exchange_rates.sort_by {|er| er.date}.last.date
 
     beta = get_beta(cr_var, mr_var)
     expected_returns = get_expected_returns(currency.exchange_rates)
 
     predicted_ex_rates = []
-    expected_returns.each_index do |i|
-      currency_rate = currency.exchange_rates.find_by(date: last_date + (i - 1).days)
+    k = 0 #iterates through exchange rates, which are not available in the weekend
+    (0..(end_date - begin_date)).each do |i|
+      currency_rate = currency.exchange_rates.find_by(date: begin_date + i.days)
       if(currency_rate != nil) #taking into account weekends
-        value = self.risk_free_rate + beta*(expected_returns[i] - risk_free_rate)
-        predicted_ex_rates << ExchangeRate.create(last: currency_rate.last*(1 + value + additional_value), date: last_date + i.days, predicted: true)
+        value = self.risk_free_rate + beta*(expected_returns[k] - risk_free_rate)
+        predicted_ex_rates << ExchangeRate.create(last: currency_rate.last*(1 + value + additional_value), date: begin_date + i.days, predicted: true)
+        k = k + 1
+        break if(k == expected_returns.size)
       end
       pp "value is #{value} while additional value is #{additional_value}"
     end
