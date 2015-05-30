@@ -92,3 +92,6 @@ gem 'curb'
 
 #for executing rake tasks from code
 gem 'rake'
+
+#for feed parsing
+gem 'feedjira'

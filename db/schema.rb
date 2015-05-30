@@ -11,11 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150526102352) do
+ActiveRecord::Schema.define(version: 20150530203153) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+
+  create_table "articles", force: :cascade do |t|
+    t.string   "name"
+    t.text     "body"
+    t.string   "url"
+    t.datetime "published_at"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.string   "guid"
+    t.text     "summary"
+  end
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name"
@@ -82,18 +93,6 @@ ActiveRecord::Schema.define(version: 20150526102352) do
     t.datetime "updated_at",               null: false
     t.float    "max_return"
     t.hstore   "weights"
-  end
-
-  create_table "predictions", force: :cascade do |t|
-    t.float    "last_ad",           default: 0.0
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
-    t.integer  "neural_network_id"
-    t.float    "last_chisq",        default: 0.0
-    t.float    "first_ad",          default: 0.0
-    t.float    "first_chisq",       default: 0.0
-    t.integer  "predictable_id"
-    t.string   "predictable_type"
   end
 
 end

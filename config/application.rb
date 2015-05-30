@@ -25,12 +25,18 @@ module IndividualProject
     config.active_record.raise_in_transactional_callbacks = true
 
     config.after_initialize do
+      start_rss
 
       #IndividualProject::Application.load_tasks
       #load File.join(Rails.root, 'lib', 'tasks', 'download_csv.rake')
       #Rake::Task[ 'download_csv:get_files' ].invoke
       #Rake::Task[ 'download_csv:place_in_database' ].invoke
     end
+
+    def start_rss
+      Article.update_from_feed("http://feeds.feedburner.com/CoinDesk")
+    end
+
   end
 
 end
