@@ -1,4 +1,17 @@
 class Article < ActiveRecord::Base
+
+  has_many :influences
+
+  after_create :get_classifications
+
+  def get_classifications
+    Knn.all.each do |knn|
+      if(knn.currency.full_name == 'Bitcoin') #classify only for Bitcoin at first
+        self.influences << knn.classify_article(self.summary, self.published_at)
+      end
+    end
+  end
+
   def self.update_from_feed(feed_url)
     feed = Feedjira::Feed.fetch_and_parse(feed_url)
     add_entries(feed.entries)

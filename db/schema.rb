@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150531100251) do
+ActiveRecord::Schema.define(version: 20150531165357) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,10 +64,18 @@ ActiveRecord::Schema.define(version: 20150531100251) do
     t.string   "predictable_type"
   end
 
+  create_table "influences", force: :cascade do |t|
+    t.integer  "knn_id"
+    t.integer  "article_id"
+    t.string   "classification"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
   create_table "knns", force: :cascade do |t|
     t.integer  "currency_id"
     t.string   "keywords",    default: [],              array: true
-    t.hstore   "cdata"
+    t.hstore   "cdata",       default: {}
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
   end

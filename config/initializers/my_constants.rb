@@ -7,3 +7,6 @@ MAX_ITERATIONS = 1000
 TRAINING_RATIO = 0.8
 #used for tests which return numerical values
 ACC_ERROR = 0.001
+
+#number of neighbours used by k nearest neighbour
+KNN_NEIGHBORS = 5

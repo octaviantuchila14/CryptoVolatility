@@ -26,8 +26,8 @@
 </p>
 
 <p>
-    <% @classifications.each do |cl| %>
-        <%= cl %>
+    <% @article.influences.each do |influence| %>
+        <%= "The article could influence #{influence.knn.currency.full_name} to #{influence.classification}"%>
     <% end %>
 </p>
 
