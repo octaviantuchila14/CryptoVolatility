@@ -6,11 +6,6 @@
 </p>
 
 <p>
-  <strong>Body:</strong>
-  <%= @article.body %>
-</p>
-
-<p>
   <strong>Url:</strong>
   <%= @article.url %>
 </p>
@@ -31,5 +26,5 @@
     <% end %>
 </p>
 
-<%= link_to 'Edit', edit_article_path(@article) %> |
-<%= link_to 'Back', articles_path %>
+<%= link_to 'Back to main page', currencies_path %> |
+<%= link_to 'Back to recent articles', articles_path %>
