@@ -30,13 +30,13 @@ class Article < ActiveRecord::Base
   private
 
   def self.add_entries(entries)
+    entries.sort_by!{|entry| entry.published}
     entries.each do |entry|
-      pp entry
       if Article.where(guid: entry.id).empty?
         create!(
             name:            entry.title,
             url:             entry.url,
-            summary:         strip_tags(entry.summary),
+            summary:         ActionView::Base.full_sanitizer.sanitize(entry.summary),
             published_at:    entry.published,
             guid:            entry.id
         )
