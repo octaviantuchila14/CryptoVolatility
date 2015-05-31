@@ -10,6 +10,12 @@ class ArticlesController < ApplicationController
   # GET /articles/1
   # GET /articles/1.json
   def show
+    @classifications = []
+    Knn.all.each do |knn|
+      if(knn.currency.full_name == 'Bitcoin') #classify only for Bitcoin at first
+        @classifications << "The article could influence #{knn.currency.full_name} to #{knn.classify_article(@article.summary, @article.published_at)}"
+      end
+    end
   end
 
   # GET /articles/new

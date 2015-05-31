@@ -5,6 +5,7 @@ class Currency < ActiveRecord::Base
   validates :full_name, presence: true
   validates_uniqueness_of :name
   has_one :neural_network, as: :predictable
+  has_one :knn
   has_many :exchange_rates, as: :predictable
   belongs_to :market
 
@@ -17,6 +18,10 @@ class Currency < ActiveRecord::Base
     #create a neural network corresponding to the currency
     if(self.neural_network == nil)
       create_neural_network
+    end
+
+    if(self.knn == nil)
+      create_knn
     end
 
     if(self.market == nil)

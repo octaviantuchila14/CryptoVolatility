@@ -34,7 +34,7 @@ module IndividualProject
     end
 
     def start_rss
-      Article.update_from_feed("http://feeds.feedburner.com/CoinDesk")
+      #Article.update_from_feed("http://feeds.feedburner.com/CoinDesk")
     end
 
   end

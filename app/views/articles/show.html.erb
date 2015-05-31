@@ -25,5 +25,11 @@
   <%= @article.summary %>
 </p>
 
+<p>
+    <% @classifications.each do |cl| %>
+        <%= cl %>
+    <% end %>
+</p>
+
 <%= link_to 'Edit', edit_article_path(@article) %> |
 <%= link_to 'Back', articles_path %>
