@@ -18,7 +18,7 @@
 
 <p>
   <strong>Portfolio maximum return:</strong>
-  <%= @portfolio.max_return %>
+  <%= number_to_percentage(100 * @portfolio.max_return) %>
 </p>
 
 <div id="return_p" >
