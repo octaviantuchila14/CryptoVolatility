@@ -1,7 +1,7 @@
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 
 <text>
-  This page displays future predictions of different machine learning structure.
+  Future predictions obtained with Machine Learning
 </text><br><br>
 
 <%= "Currency Historic data" %>
@@ -15,5 +15,14 @@
 <%= "Neural network with backpropagation estimation" %>
 <%= line_chart exchange_rates_as_hash(@nn_ers) %>
 
+<text>
+  You want to find out more about the currency?
+</text><br>
 <%= link_to 'Back to the currency\'s page', currency_path(@pred_currency)%>
+<br><br><br>
+
+<text>
+  You want to find out how news articles will affect future prices?
+</text>
+<br>
 <%= link_to 'Back to main page', currencies_path %>

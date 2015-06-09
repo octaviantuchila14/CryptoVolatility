@@ -1,4 +1,3 @@
-<p id="notice"><%= notice %></p>
 
 <text>
     The data listed below shows how the currency's price has evolved for the given time period,
@@ -27,5 +26,9 @@
 <%= line_chart exchange_rates_as_hash(@ill_ers) %>
 
 
+<br><text>
+  You want to find out more about the currency?
+</text><br>
 <%= link_to 'Back to the currency\'s page', currency_path(@pred_currency)%>
+<br><br><br>
 <%= link_to 'Back to main page', currencies_path %>

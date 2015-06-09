@@ -1,8 +1,17 @@
 <h1> Cryptocurrency Analytics </h1>
 
-<br><text>Click on any of the currencies to view individual analytics
-    as well as machine learning predictions.</text><br>
+<br><text>
+  See how much you can gain by holding individual cryptocurrencies.
+</text><br>
+<p>
+  <%= link_to 'Create new portfolio', new_portfolio_path %>
+</p>
+<br>
+<br>
 
+<br><text>
+  Find out more about each individual currency by clicking on it.
+</text><br>
 <table>
   <thead>
     <tr>
@@ -20,22 +29,13 @@
     <% end %>
   </tbody>
 </table>
+<br>
+<br>
 
-
-<br><br><br><text>
-  Click to construct your own portfolio of cryptocurrencies, between two past dates and with your desired rate of return
-</text><br>
 
 <p>
-  Portfolio selection
-  <%= link_to 'Create new portfolio', new_portfolio_path %>
+  See the latest news and how they affect prices.
 </p>
-
-<br>
-<br>
-
-
 <p>
-  See the latest news about cryptocurrencies
   <%= link_to 'News articles', articles_path %>
 </p>

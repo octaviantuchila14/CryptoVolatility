@@ -1,9 +1,9 @@
 <text>
   You have created a portfolio.
   <br><br>
-  Now, input an expected return and the we will find and display a portfolio with minimum variance.
-  <br><br>
-  We are using the Markowitz Model which so the higher the return you select, the higher the variance.
+  Now, select how much return you would want for the portfolio.
+  <br>
+  The bigger the return, the bigger the risk!
 </text>
 
 <p>
@@ -68,6 +68,11 @@
         <%= pie_chart @portfolio.weights %>
       <% end %>
       <%= column_chart @portfolio.weights %>
+
+      <br><br>
+      <text>
+        Find out more about each individual currency.
+      </text>
   <% end %>
 </div>
 

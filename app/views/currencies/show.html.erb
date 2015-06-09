@@ -4,7 +4,9 @@
 </p>
 
 <br><text>
-  See how financial models have done in estimating the past values of cryptocurrencies.
+  Want to know if the currency is a stable investment?
+  <br>
+  See how the currency is connected with other currencies, markets and assets!
 </text><br>
 
 <%=form_for @currency do |f| %>
@@ -14,7 +16,7 @@
 
 
 <br><text>
-  Get future predictions using machine learning.
+  See how the currency's price will evolve!
 </text><br>
 
 <%=form_for @currency do |f| %>
@@ -22,4 +24,5 @@
     <%= f.submit "Machine Learning future predictions", class: "btn btn-primary" %>
 <% end %>
 
+<br><br>
 <%= link_to 'Back to main page', currencies_path %>
