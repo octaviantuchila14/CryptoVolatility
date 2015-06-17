@@ -9,29 +9,16 @@
 <br>
 <br>
 
-<br><text>
-  Find out more about each individual currency by clicking on it.
-</text><br>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Cryptocurrencies</h4></div>
+    <div class="panel-body">
+    Find out more about each one by clicking on it.
+    </div>
     <% @currencies.each do |currency| %>
-      <tr>
-        <td><%= currency.full_name %></td>
-        <td><%= link_to 'Show', currency %></td>
-      </tr>
+        <b><a href=<%= "currencies/#{currency.id}" %> class="list-group-item"><%= currency.full_name %></a></b>
     <% end %>
-  </tbody>
-</table>
-<br>
-<br>
-
+  </ul>
+</div>
 
 <p>
   See the latest news and how they affect prices.
