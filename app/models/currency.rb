@@ -53,11 +53,12 @@ class Currency < ActiveRecord::Base
     if(er_start == nil || er_end == nil || er_start.date >= er_end.date)
       return nil
     end
+    p "for #{self.full_name}, the result is #{(er_end.last - er_start.last)/er_start.last}"
     (er_end.last - er_start.last)/er_start.last
   end
 
   def all_returns(start_date, end_date)
-    returns = []
+    returns = [0]
     ers = ExchangeRate.where(date: (start_date - 1.days)..(end_date + 1.days), predictable: self)
     ers.each_index do |i|
       if(i > 0)

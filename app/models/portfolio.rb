@@ -80,6 +80,7 @@ class Portfolio < ActiveRecord::Base
         end
       end
     end
+
     (0..self.currencies.size - 1).each do |k|
       m[self.currencies.size, k] = -@overall_returns[k]
       m[self.currencies.size + 1, k] = -1.0
