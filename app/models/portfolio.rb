@@ -16,11 +16,16 @@ class Portfolio < ActiveRecord::Base
 
   def return_between_zero_and_max_return?
     if(p_return != nil)
-      unless(0 <= p_return && p_return <= max_return)
+      p "predicted return is #{p_return}"
+      unless(0 <= p_return / 100 && p_return / 100 <= max_return)
         errors.add(:p_return, "The return is not between 0 and the max return")
       end
     end
   end
+
+  # def p_return=(val)
+  #   write_attribute :p_return, val.to_f/100
+  # end
 
   def compute_max_return
     biggest_return = 0
@@ -28,8 +33,6 @@ class Portfolio < ActiveRecord::Base
     currencies = Currency.all
     currencies.each do |cr|
       cr_return = cr.return_between(self.start_date, self.end_date)
-      pp "the current currency is #{cr.full_name}"
-      pp cr_return
       if(cr_return != nil && cr_return > biggest_return)
         biggest_return = cr_return
       end
@@ -69,6 +72,7 @@ class Portfolio < ActiveRecord::Base
       return self.weights
     end
 
+
     m = Matrix.build(self.currencies.size + 2, self.currencies.size + 2)
     #do linear computation
     (0..self.currencies.size - 1).each do |i|
@@ -76,7 +80,7 @@ class Portfolio < ActiveRecord::Base
         if(i == j)
           m[i, j] = 1.0
         else
-          m[i, j] = Statsample::Bivariate.covariance(@all_returns[i].to_scale, @all_returns[j].to_scale)
+          m[i, j] = Statsample::Bivariate.covariance(@all_returns[i].drop(1).to_scale, @all_returns[j].drop(1).to_scale)
         end
       end
     end
@@ -89,7 +93,7 @@ class Portfolio < ActiveRecord::Base
     end
 
     v = Matrix.build(self.currencies.size + 2, 1)
-    v[self.currencies.size, 0] = -self.p_return
+    v[self.currencies.size, 0] = -self.p_return / 100
     v[self.currencies.size + 1, 0] = -1.0
 
     weights_vector = m.inverse * v
@@ -99,15 +103,16 @@ class Portfolio < ActiveRecord::Base
     end
 
     #compute variance
+    self.variance = 0
     (0..self.currencies.size - 1).each do |i|
       (0..self.currencies.size - 1).each do |j|
         self.variance += weights_vector[i, 0] * weights_vector[j, 0] * m[i, j]
       end
     end
     self.variance = self.variance*2
-    #finished computing its variance
+    #finished computing its varianc
 
-    pp "in the model, the weights have been computed #{self.weights}"
+
     self.weights_will_change!
     self.save
 

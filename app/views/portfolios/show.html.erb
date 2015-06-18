@@ -42,7 +42,7 @@
 <br><br>
 
 <div id="computed_portfolio">
-  <% if(@portfolio.p_return != nil && @portfolio.p_return.between?(0, @portfolio.max_return)) %>
+  <% if(@portfolio.p_return != nil && (@portfolio.p_return/100).between?(0, @portfolio.max_return)) %>
 
       <strong>Optimal Variance:</strong>
       <%= @portfolio.variance %>
