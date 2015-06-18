@@ -46,12 +46,13 @@ class Currency < ActiveRecord::Base
   end
 
   def return_between(start_date, end_date)
-    er_start = ExchangeRate.where(date: start_date, predictable: self).first
-    er_end = ExchangeRate.where(date: end_date, predictable: self).first
-    if(er_start == nil || er_end == nil)
+    er_start = self.exchange_rates.select{|er| start_date <= er.date && er.date <= end_date}.first
+    er_end = self.exchange_rates.select{|er| er.date <= end_date}.last
+    p "er_start date is #{er_start.date}"
+    p "er_end date is #{er_end.date}"
+    if(er_start == nil || er_end == nil || er_start.date >= er_end.date)
       return nil
     end
-    pp "er end is #{er_end.last}, er start is #{er_start.last}"
     (er_end.last - er_start.last)/er_start.last
   end
 
