@@ -7,7 +7,7 @@ class Currency < ActiveRecord::Base
   has_one :neural_network, as: :predictable
   has_one :knn
   has_many :exchange_rates, as: :predictable
-  belongs_to :market
+  belongs_to :marketplace
 
   has_many :currencies_portfolios
   has_many :portfolios, through: :currencies_portfolios
@@ -24,11 +24,11 @@ class Currency < ActiveRecord::Base
       create_knn
     end
 
-    if(self.market == nil)
-      if(Market.all.size == 0)
-        create_market(name: :"^GSPC")
+    if(self.marketplace == nil)
+      if(Marketplace.all.size == 0)
+        create_marketplace
       else
-        self.market = Market.first
+        self.marketplace = Marketplace.first
       end
     end
 
@@ -36,7 +36,7 @@ class Currency < ActiveRecord::Base
 
   def get_variation
     variations = []
-    exchange_rates = self.exchange_rates.where(predicted: false).sort_by{|er| er.time}
+    exchange_rates = self.exchange_rates.where(predicted: false).sort_by{|er| er.date}
     exchange_rates.each_index do |index|
       if(index + 1 < exchange_rates.size)
         variations << (exchange_rates[index + 1].last - exchange_rates[index].last)/exchange_rates[index].last
@@ -71,6 +71,20 @@ class Currency < ActiveRecord::Base
   def get_variance(start_date, end_date)
     p "in the currency controller, the returns are #{all_returns(start_date, end_date)}"
     all_returns(start_date, end_date).to_scale.variance_population
+  end
+
+  def last_month
+    variations = []
+    exchange_rates = self.exchange_rates.where("date >= ? AND predicted = ?", Date.today - MONTH_DAYS.days, false).sort_by{|er| er.date}
+    exchange_rates.each_index do |index|
+      if(index + 1 < exchange_rates.size)
+        variation = {}
+        variation[:return] = (exchange_rates[index + 1].last - exchange_rates[index].last)/exchange_rates[index].last
+        variation[:date] = exchange_rates[index + 1].date
+        variations << variation
+      end
+    end
+    variations
   end
 
 end

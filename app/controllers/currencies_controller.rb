@@ -45,7 +45,7 @@ class CurrenciesController < ApplicationController
       if(params[:currency][:prediction_type] == "neural_network")
         redirect_to neural_network_url(id: @currency.neural_network.id, currency_id: @currency.id)
       elsif(params[:currency][:prediction_type]  == "capm")
-        redirect_to market_url(id: @currency.market.id, currency_id: @currency.id)
+        redirect_to marketplace_url(id: @currency.marketplace.id, currency_id: @currency.id)
       end
     end
   end

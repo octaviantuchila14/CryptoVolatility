@@ -1,0 +1,7 @@
+
+<% @correlations_hash.each do |key, value| %>
+    <%= "#{key} has correlation #{value}" %>
+<% end %>
+
+<%= link_to 'Edit', edit_marketplace_path(@marketplace) %> |
+<%= link_to 'Back', marketplaces_path %>

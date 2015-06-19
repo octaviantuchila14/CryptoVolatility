@@ -1,0 +1,17 @@
+<%= form_for(@marketplace) do |f| %>
+  <% if @marketplace.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@marketplace.errors.count, "error") %> prohibited this marketplace from being saved:</h2>
+
+      <ul>
+      <% @marketplace.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

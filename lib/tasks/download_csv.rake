@@ -1,16 +1,19 @@
 namespace :download_csv do
-  coins = ["btc", "ltc", "nmc", "nvc", "ppc"]
-  full_names = {"btc" => "Bitcoin", "ltc" => "Litecoin", "nmc" => "Namecoin", "nvc" => "Novacoin", "ppc" => "Peercoin"}.with_indifferent_access
+  coins = ["btc", "ltc", "nmc", "nvc", "ppc", "xrp"]
+  exchange = {"btc" => "btce", "ltc" => "btce", "nmc" => "btce", "nvc" => "btce", "ppc" => "btce", "xrp" => "cryptsy"}.with_indifferent_access
+  full_names = {"btc" => "Bitcoin", "ltc" => "Litecoin", "nmc" => "Namecoin", "nvc" => "Novacoin", "ppc" => "Peercoin", "xrp" => "Ripple"}.with_indifferent_access
   ref_coin = "usd"
 
   task get_files: :environment do
 
     coins.each do |coin|
       label_str = coin + "_" + ref_coin
-      csv_prices = Curl.post("http://alt19.com/", {source: 'btce', label: label_str, period: '1d', presence: 'csv', submit: 'OK'})
+      label_str = label_str.upcase if(coin == "xrp")
+      csv_prices = Curl.post("http://alt19.com/", {source: exchange[coin], label: label_str, period: '1d', presence: 'csv', submit: 'OK'}).body_str
       file = File.join(Rails.root, 'tmp', 'csvFiles', label_str + ".csv")
       File.open(file, "w") do |file|
-        file.puts csv_prices.body_str.gsub(label_str + ", ", "")
+        csv_prices = ["DATE, TIME, LAST, r1, r2, r3\n", csv_prices].join if(coin == "xrp")
+        file.puts csv_prices.gsub(label_str + ", ", "")
       end
     end
 

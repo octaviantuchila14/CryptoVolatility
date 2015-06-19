@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :marketplaces
   resources :articles
   resources :portfolios
   root "currencies#index"

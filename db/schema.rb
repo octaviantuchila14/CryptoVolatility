@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150531165357) do
+ActiveRecord::Schema.define(version: 20150619121026) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20150531165357) do
     t.integer  "prediction_days"
     t.integer  "prediction_type"
     t.integer  "market_id"
+    t.integer  "marketplace_id"
   end
 
   create_table "currencies_portfolios", force: :cascade do |t|
@@ -78,6 +79,11 @@ ActiveRecord::Schema.define(version: 20150531165357) do
     t.hstore   "cdata",       default: {}
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
+  end
+
+  create_table "marketplaces", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "markets", force: :cascade do |t|
