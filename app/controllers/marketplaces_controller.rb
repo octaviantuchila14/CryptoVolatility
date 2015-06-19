@@ -12,6 +12,7 @@ class MarketplacesController < ApplicationController
    def show
       @pred_currency = Currency.find_by(id: params[:currency_id])
       @correlations_hash = @marketplace.get_correlations(@pred_currency)
+     @capm = @marketplace.ill_capm(@pred_currency)
   #   @capm_ers = @market.capm_prediction(@pred_currency)
   #   @ill_ers = @market.illiquidity_prediction(@pred_currency)
   end

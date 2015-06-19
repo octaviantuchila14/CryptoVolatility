@@ -30,7 +30,7 @@ class Portfolio < ActiveRecord::Base
   def compute_max_return
     biggest_return = 0
 
-    currencies = Currency.all
+    currencies = Currency.first(BTCE)
     currencies.each do |cr|
       cr_return = cr.return_between(self.start_date, self.end_date)
       if(cr_return != nil && cr_return > biggest_return)
@@ -45,7 +45,7 @@ class Portfolio < ActiveRecord::Base
     @overall_returns = []
     @all_returns = []
     self.currencies = []
-    Currency.all.each do |cr|
+    Currency.first(BTCE).each do |cr|
       ri = cr.return_between(self.start_date, self.end_date)
       if(ri != nil)
         @overall_returns << ri

@@ -1,7 +1,70 @@
 
-<% @correlations_hash.each do |key, value| %>
-    <%= "#{key} has correlation #{value}" %>
+
+<% smallest_correlations = @correlations_hash.sort_by{|k, v| v}.first(3) %>
+<% largest_correlations = @correlations_hash.sort_by{|k, v| v}.reverse!.first(3) %>
+
+<b><%="Cryptocurrencies least correlated with #{@pred_currency.full_name} in the last month. These are desirable in your portfolio."%></b>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <th> Currency </th>
+    <th> Correlation </th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% smallest_correlations.each do |key, value| %>
+      <tr>
+        <td><%= key %></td>
+        <td><%= number_to_percentage(value * 100) %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<b><%="Cryptocurrencies least correlated with #{@pred_currency.full_name} in the last month. If you have a large portion of them, together with #{@pred_currency.full_name},
+ we advise that you balance your portfolio."%></b>
+
+<table class="table table-bordered table-hover">
+  <thead>
+  <tr>
+    <td> Currency </td>
+    <td> Correlation </td>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% largest_correlations.each do |key, value| %>
+      <tr>
+        <td><%= key %></td>
+        <td><%= number_to_percentage(value * 100) %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+
+<b>Financial Model Analysis</b><br>
+
+<text><%= "The Capital Asset Pricing Model(CAPM) states that for the last month #{@pred_currency.full_name} has" %></text><br>
+<text><%= "Beta #{number_to_percentage(@capm[:beta])}" %></text><br>
+<text><%= "Yesterday, the CAPM estimated" %> </text><br>
+<text><%= "Expected Return #{number_to_percentage(@capm[:expected_return])}" %></text><br>
+<text><%= "Actual Return #{number_to_percentage(@capm[:actual_return])}" %></text><br>
+
+<% if(@pred_currency.name != 'btc')%>
+    <text><%= "The Capm adjusted for illiquidity predicts:" %></text><br>
+    <text><%= "Illiquidity adjusted expected return #{number_to_percentage(@capm[:ill_expected])}" %></text><br>
 <% end %>
+
+<% if(@capm[:expected_return] > @capm[:actual_return]) %>
+    <b>Therefore it is overpriced according to the cryptocurrency market.</b>
+<% else %>
+    <b>Therefore it is underpriced according to the cryptocurrency market.</b>
+<% end %>
+<br>
+
 
 <%= link_to 'Edit', edit_marketplace_path(@marketplace) %> |
 <%= link_to 'Back', marketplaces_path %>
