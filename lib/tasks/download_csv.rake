@@ -1,18 +1,20 @@
 namespace :download_csv do
-  coins = ["btc", "ltc", "nmc", "nvc", "ppc", "xrp"]
-  exchange = {"btc" => "btce", "ltc" => "btce", "nmc" => "btce", "nvc" => "btce", "ppc" => "btce", "xrp" => "cryptsy"}.with_indifferent_access
-  full_names = {"btc" => "Bitcoin", "ltc" => "Litecoin", "nmc" => "Namecoin", "nvc" => "Novacoin", "ppc" => "Peercoin", "xrp" => "Ripple"}.with_indifferent_access
+  coins = ["btc", "ltc", "nmc", "nvc", "ppc", "xrp", "doge", "ftc", "nxt", "xpy"]
+  exchange = {"btc" => "btce", "ltc" => "btce", "nmc" => "btce", "nvc" => "btce", "ppc" => "btce", "xrp" => "cryptsy",
+              "doge" => "cryptsy", "ftc" => "cryptsy", "nxt" => "cryptsy", "xpy" => "cryptsy"}.with_indifferent_access
+  full_names = {"btc" => "Bitcoin", "ltc" => "Litecoin", "nmc" => "Namecoin", "nvc" => "Novacoin", "ppc" => "Peercoin", "xrp" => "Ripple",
+                "doge" => "Dogecoin", "ftc" => "FeatherCoin", "nxt" => "Nxt", "xpy" => "PayCoin"}.with_indifferent_access
   ref_coin = "usd"
 
   task get_files: :environment do
 
     coins.each do |coin|
       label_str = coin + "_" + ref_coin
-      label_str = label_str.upcase if(coin == "xrp")
+      label_str = label_str.upcase if(exchange[coin] == "cryptsy")
       csv_prices = Curl.post("http://alt19.com/", {source: exchange[coin], label: label_str, period: '1d', presence: 'csv', submit: 'OK'}).body_str
       file = File.join(Rails.root, 'tmp', 'csvFiles', label_str + ".csv")
       File.open(file, "w") do |file|
-        csv_prices = ["DATE, TIME, LAST, r1, r2, r3\n", csv_prices].join if(coin == "xrp")
+        csv_prices = ["DATE, TIME, LAST, r1, r2, r3\n", csv_prices].join if(["xrp", "xpy"].include?(coin))
         file.puts csv_prices.gsub(label_str + ", ", "")
       end
     end
@@ -28,6 +30,7 @@ namespace :download_csv do
       currency = Currency.create(name: coin, full_name: full_names[coin])
       data.each do |rate|
         extracted_date = Date.new(rate[:date].to_s[0..3].to_i, rate[:date].to_s[4..5].to_i, rate[:date].to_s[6..7].to_i)
+
         #keep only rates for weekdays
         if([0,6].include?(extracted_date.wday) == false)
           currency.exchange_rates << ExchangeRate.create(last: rate[:last], volume: rate[:volume], predicted: currency, date: extracted_date,
