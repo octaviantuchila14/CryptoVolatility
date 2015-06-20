@@ -13,7 +13,9 @@
 </text><br><br>
 
 <%= "Neural network with backpropagation estimation" %>
-<%= line_chart exchange_rates_as_hash(@nn_ers), library: {vAxis: {title: "US Dollars"}} %>
+<%= line_chart [{name: "Predictions", data: exchange_rates_as_hash(@nn_ers)},
+                {name: "Previous Week", data: exchange_rates_as_hash(@pred_currency.last_week_rates)}],
+                library: {vAxis: {title: "US Dollars"}, colors: ["red", "blue"]} %>
 
 <text>
   You want to find out more about the currency?
@@ -26,3 +28,9 @@
 </text>
 <br>
 <%= link_to 'Back to main page', currencies_path %>
+
+
+<%# line_chart [
+                       {name: "Series A", data: series_a},
+                       {name: "Series B", data: series_b}
+               ] %>

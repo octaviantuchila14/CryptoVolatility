@@ -87,4 +87,9 @@ class Currency < ActiveRecord::Base
     variations
   end
 
+  #returns exchange rates from the last 7 days
+  def last_week_rates
+    self.exchange_rates.sort_by {|er| er.date}.last(WEEK_DAYS)
+  end
+
 end

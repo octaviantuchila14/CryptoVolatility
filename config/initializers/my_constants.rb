@@ -16,8 +16,9 @@ LOW_CORRELATION  = -0.1
 
 MONTH_DAYS = 30
 
-
 BTCE = 5
 
 #how many are selected for each criterion
 SELECTED_TOP = 3
+
+WEEK_DAYS = 7
