@@ -63,7 +63,7 @@ class NeuralNetwork < ActiveRecord::Base
   end
 
   def optimise_network_parameters(inputs, desired_outputs)
-    least_difference = 100000000
+    least_difference = DIFF_STD
     best_input_ls = 0
     best_output_ls = 0
     best_hidden_ls = 0
@@ -88,16 +88,48 @@ class NeuralNetwork < ActiveRecord::Base
   end
 
 
-  def reccurent_cross_validate
-    tlearn = TLearn::Run.new(:number_of_nodes => 86,
-                             :output_nodes    => 41..46,
-                             :linear          => 47..86,
-                             :weight_limit    => 1.00,
-                             :connections     => [{1..81   => 0},
-                                                  {1..40   => :i1..:i77},
-                                                  {41..46  => 1..40},
-                                                  {1..40   => 47..86},
-                                                  {47..86  => [1..40, {:max => 1.0, :min => 1.0}, :fixed, :one_to_one]}])
+  def reccurent_train(inputs, outputs)
+    tlearn = TLearn::Run.new(:number_of_nodes => NR_NODES,
+                             :output_nodes    => OUT_BEG..OUT_END,
+                             :linear          => LIN_BEG..LIN_END,
+                             :weight_limit    => W_LIM,
+                             :connections     => [{C11..C12   => 0},
+                                                  {C21..C22   => :i1..:i77},
+                                                  {C11..C22  => [C12..C21, {:max => MAX_OUT, :min => MIN_OUT}, :fixed, :one_to_one]}])
+    tlearn.train(inputs)
+    nn = tlearn.fitness(outputs)
   end
+
+
+  def optimise_training(inputs, rec_nn)
+    outputs = rec_nn.train(inputs)
+    diff = outputs.get_bias
+    rec_nn.update_weights(diff)
+  end
+
+
+  def recurrent_optimise(inputs, desired_outputs, tlearn)
+    least_difference = DIFF_STD
+    best_input_ls = 0
+    best_output_ls = 0
+    best_hidden_ls = 0
+    (0..INPUT_LS).each do |i|
+      (0..OUTPUT_LS).each do |o|
+        (0..HIDDEN_LS).each do |h|
+          nn = tlearn.fitness(num_inputs: i, hidden_neurons: [h, h], num_outputs: o)
+          outputs = nn.run(inputs)
+          res = outputs.inject(0){ |s, out| s += out - desired_outputs[i]}
+          if(res < least_difference)
+            res = least_difference
+            best_input_ls = i
+            best_output_ls = o
+            best_hidden_ls = h
+          end
+        end
+      end
+    end
+    tlearn.train(best_input_ls, best_hidden_ls, best_output_ls)
+  end
+
 
 end
