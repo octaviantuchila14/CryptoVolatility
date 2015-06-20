@@ -72,6 +72,9 @@ end
 gem 'ruby-fann', '~> 1.2.6'
 gem 'ai4r'
 
+#reccurent neural networks
+gem 'tlearn', git: "git://github.com/octaviantuchila14/tlearn-rb"
+
 #charts
 gem 'chartkick'
 
