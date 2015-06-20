@@ -1,4 +1,5 @@
 require 'ruby-fann'
+require 'tlearn'
 
 class NeuralNetwork < ActiveRecord::Base
 
@@ -46,6 +47,11 @@ class NeuralNetwork < ActiveRecord::Base
     fann.run(returns.last(INPUT_LS))
   end
 
+
+  def apply_momentum(delta, old_weight)
+    return MOMENTUM * old_weight + (1 - MOMENTUM) * delta
+  end
+
   def normalisation(p_ers)
     p_ers.each_index do |i|
       if(i >= 4)
@@ -56,9 +62,42 @@ class NeuralNetwork < ActiveRecord::Base
     end
   end
 
-  def optimise_network_parameters
+  def optimise_network_parameters(inputs, desired_outputs)
+    least_difference = 100000000
     best_input_ls = 0
-    least_differece = 0
+    best_output_ls = 0
+    best_hidden_ls = 0
+    (0..INPUT_LS).each do |i|
+      (0..OUTPUT_LS).each do |o|
+        (0..HIDDEN_LS).each do |h|
+          nn = RubyFann::Standard.new(num_inputs: i, hidden_neurons: [h, h], num_outputs: o)
+          outputs = nn.run(inputs)
+          res = outputs.inject(0){ |s, out| s += out - desired_outputs[i]}
+          if(res < least_difference)
+            res = least_difference
+            best_input_ls = i
+            best_output_ls = o
+            best_hidden_ls = h
+          end
+        end
+      end
+    end
+
+    fann = RubyFann::Standard.new(num_inputs: best_input_ls, hidden_neurons: [best_hidden_ls, best_hidden_ls], num_outputs: best_output_ls)
+    fann
+  end
+
+
+  def reccurent_cross_validate
+    tlearn = TLearn::Run.new(:number_of_nodes => 86,
+                             :output_nodes    => 41..46,
+                             :linear          => 47..86,
+                             :weight_limit    => 1.00,
+                             :connections     => [{1..81   => 0},
+                                                  {1..40   => :i1..:i77},
+                                                  {41..46  => 1..40},
+                                                  {1..40   => 47..86},
+                                                  {47..86  => [1..40, {:max => 1.0, :min => 1.0}, :fixed, :one_to_one]}])
   end
 
 end
