@@ -24,8 +24,9 @@ class NeuralNetwork < ActiveRecord::Base
       val *= (1 + predicted_returns[i])
       date += 1.day
       predicted_ers << ExchangeRate.new(last: val, date: date, predictable: currency, predicted: true)
-      #probably, this won't be allowed in the database
     end
+    p_ers = currency.exchange_rates.select{|er| er.predicted == false}.sort_by{|er| er.date}.last(4) + predicted_ers
+    predicted_ers =  normalisation(p_ers).drop(4)
 
     predicted_ers
   end
@@ -43,6 +44,21 @@ class NeuralNetwork < ActiveRecord::Base
     fann = RubyFann::Standard.new(num_inputs: INPUT_LS, hidden_neurons: [HIDDEN_LS, HIDDEN_LS], num_outputs: OUTPUT_LS)
     fann.train_on_data(train, MAX_ITERATIONS, 0, MSE) # 1000 max_epochs, 10 errors between reports and 0.1 desired MSE (mean-squared-error)
     fann.run(returns.last(INPUT_LS))
+  end
+
+  def normalisation(p_ers)
+    p_ers.each_index do |i|
+      if(i >= 4)
+        rel_last = p_ers[i - 4..i].map{|er| er.last}
+        p_ers[i].last = (0..LEARNING_C.size - 1).inject(0) {|s, j| s + LEARNING_C[j] * rel_last[j]}
+        #(0...array_A.count).inject(0) {|r, i| r + array_A[i]*array_B[i]}
+      end
+    end
+  end
+
+  def optimise_network_parameters
+    best_input_ls = 0
+    least_differece = 0
   end
 
 end
