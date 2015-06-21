@@ -54,7 +54,7 @@ class Marketplace < ActiveRecord::Base
     cr1.each do |day_val|
       r2 = cr2.select{|er| er[:date] == day_val[:date]}.first
       r3 = cr3.select{|er| er[:date] == day_val[:date]}.first
-      day_val[:return] = 0.95*day_val[:return] + 0.3*r2[:return] + 0.2*r3[:return]
+      day_val[:return] = 0.95*day_val[:return] + 0.03*r2[:return] + 0.02*r3[:return]
     end
 
     cr1

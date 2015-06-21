@@ -1,4 +1,9 @@
+<div class="text-center container">
 
+  <h3>
+    Connections with other cryptocurrencies.
+  </h3>
+  <br>
 
 <% smallest_correlations = @correlations_hash.sort_by{|k, v| v}.first(3) %>
 <% largest_correlations = @correlations_hash.sort_by{|k, v| v}.reverse!.first(3) %>
@@ -8,8 +13,8 @@
 <table class="table table-bordered table-hover">
   <thead>
   <tr>
-    <th> Currency </th>
-    <th> Correlation </th>
+    <th class="text-center"> Currency </th>
+    <th class="text-center"> Correlation </th>
   </tr>
   </thead>
 
@@ -29,8 +34,8 @@
 <table class="table table-bordered table-hover">
   <thead>
   <tr>
-    <td> Currency </td>
-    <td> Correlation </td>
+    <th class="text-center"> Currency </th>
+    <th class="text-center"> Correlation </th>
   </tr>
   </thead>
 
@@ -44,27 +49,131 @@
   </tbody>
 </table>
 
+  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#correlationsModal">
+    How is this data helpful?
+  </button>
+  <!-- Modal -->
+  <div class="modal fade" id="correlationsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">The Markowitz Model</h4>
+        </div>
+        <div class="modal-body">
+          Impact of correlations
+          <br><br>
+          Cryptocurrencies which display a small correlation between each other vary in price very differently.
+          Therefore they can be used to reduce each other's risk.
+          <br>
+          If the cryptocurrencies which are loosely correlated are not overpriced by the market, then they should be
+          brought into the portfolio.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<b>Financial Model Analysis</b><br>
+  <br><br><br><br>
 
-<text><%= "The Capital Asset Pricing Model(CAPM) states that for the last month #{@pred_currency.full_name} has" %></text><br>
-<text><%= "Beta #{number_to_percentage(@capm[:beta])}" %></text><br>
-<text><%= "Yesterday, the CAPM estimated" %> </text><br>
-<text><%= "Expected Return #{number_to_percentage(@capm[:expected_return])}" %></text><br>
-<text><%= "Actual Return #{number_to_percentage(@capm[:actual_return])}" %></text><br>
 
-<% if(@pred_currency.name != 'btc')%>
-    <text><%= "The Capm adjusted for illiquidity predicts:" %></text><br>
-    <text><%= "Illiquidity adjusted expected return #{number_to_percentage(@capm[:ill_expected])}" %></text><br>
-<% end %>
+<h3>Financial Model Analysis</h3>
+
+  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#fmodModal">
+    What are these?
+  </button>
+  <!-- Modal -->
+  <div class="modal fade" id="fmodModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">The Markowitz Model</h4>
+        </div>
+        <div class="modal-body">
+          Financial Models
+          <br><br>
+          Financial models are mathematical constructs which try to describe the price of a set of assets.
+          I am using them to see if the cryptocurrencies analysed are well priced.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<br><br>
+
+<p class="lead">
+    <text><%= "The Capital Asset Pricing Model(CAPM) states that for the last month #{@pred_currency.full_name} has" %></text><br>
+    <text><%= "Beta #{@capm[:beta].round(2)}" %></text><br>
+
+      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#betaModal">
+        What is Beta? How is this relevant?
+      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="betaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">The Markowitz Model</h4>
+            </div>
+            <div class="modal-body">
+              Beta
+              <br><br>
+              Beta is a measure of connection between an asset and a market. The stronger the connection, the higher the return that is expected from the asset.
+              <br>
+              If an asset has a low Beta and high returns, then it is desirable.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <br>
+
+  <p class="lead"><%= "Predictions for Yesterday" %> </p>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+      <th class="text-center"> Type of return </th>
+      <th class="text-center"> Value </th>
+    </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+          <td>CAPM's Expected Return</td>
+          <td><%= number_to_percentage(100 * @capm[:expected_return]) %></td>
+        </tr>
+        <% if(@pred_currency.name != 'btc')%>
+        <tr>
+          <td>Illiquidity adjusted CAPM's expected return</td>
+          <td><%= number_to_percentage(100 * @capm[:ill_expected]) %></td>
+        </tr>
+        <% end %>
+        <tr>
+          <td><bold>Actual Return</bold></td>
+          <td><bold><%= number_to_percentage(100 * @capm[:actual_return]) %></bold></td>
+        </tr>
+    </tbody>
+  </table>
+
+</p>
+
 
 <% if(@capm[:expected_return] > @capm[:actual_return]) %>
-    <b>Therefore it is overpriced according to the cryptocurrency market.</b>
+    <b>Therefore it is overpriced when compared with the overall cryptocurrency market.</b>
 <% else %>
-    <b>Therefore it is underpriced according to the cryptocurrency market.</b>
+    <b>Therefore it is underpriced when compared with the overall cryptocurrency market.</b>
 <% end %>
 <br>
 
-
-<%= link_to 'Edit', edit_marketplace_path(@marketplace) %> |
-<%= link_to 'Back', marketplaces_path %>
+</div>
