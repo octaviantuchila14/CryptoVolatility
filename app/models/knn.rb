@@ -16,9 +16,11 @@ class Knn < ActiveRecord::Base
     end
 
     if(self.currency.exchange_rates.where("date >= ?", published_at.to_date).count >= 2)
-      ers = self.currency.exchange_rates.where("date >= ?", published_at.to_date).first(2).sort_by{ |er| er.date}
+      ers = self.currency.exchange_rates.where("date >= ?", published_at.to_date).first(2).sort_by{|er| er.date}
+      pp "We have the exhcange rates: #{ers[0].last} from #{ers[0].date}, #{ers[1].last} from #{ers[1].date}"
       result = ers[0].last < ers[1].last ? "increase" : "decrease"
     else
+      pp "using classifier"
       result = classify(occurences)
     end
 

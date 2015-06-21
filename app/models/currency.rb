@@ -48,8 +48,6 @@ class Currency < ActiveRecord::Base
   def return_between(start_date, end_date)
     er_start = self.exchange_rates.select{|er| start_date <= er.date && er.date <= end_date}.first
     er_end = self.exchange_rates.select{|er| er.date <= end_date}.last
-    p "er_start date is #{er_start.date}"
-    p "er_end date is #{er_end.date}"
     if(er_start == nil || er_end == nil || er_start.date >= er_end.date)
       return nil
     end

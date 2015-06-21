@@ -9,7 +9,7 @@ class Portfolio < ActiveRecord::Base
   has_many :currencies, through: :currencies_portfolios
 
   def valid_time_interval?
-    unless(start_date < end_date && end_date <= Date.today)
+    unless(start_date < end_date && end_date <= Date.today - 1.day)
       errors.add(:end_date, "start and end date don't form a valid interval")
     end
   end

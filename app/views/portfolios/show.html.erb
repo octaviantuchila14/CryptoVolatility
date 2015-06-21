@@ -47,6 +47,7 @@
 
     <br><br><br><br>
 
+    <% if(@portfolio.max_return > 0) %>
     <div id="return_p" >
         <%=form_for @portfolio do |f| %>
               <% if @portfolio.errors.any? %>
@@ -160,4 +161,5 @@
 
       <% end %>
     </div>
+  <% end %>
 </div>
