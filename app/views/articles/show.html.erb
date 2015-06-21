@@ -1,28 +1,43 @@
-<p>
-  <strong>Name:</strong>
+<div class="text-center container">
+<h2>
   <%= @article.name %>
-</p>
+</h2>
 
 <p>
-  <strong>Url:</strong>
-  <%= @article.url %>
+    <strong>Source:</strong>
+    <a href="url"><%= @article.url %></a>
 </p>
 
 <p>
   <strong>Published at:</strong>
   <%= @article.published_at %>
 </p>
+<br><br>
 
 <p>
   <strong>Summary:</strong>
-  <%= @article.summary %>
+  <br>
+  <large><%= @article.summary %></large>
 </p>
 
-<p>
+<br><br><br><br>
+
+<p class="lead">Possible influences</p>
+
+<table class="table table-bordered table-hover">
+    <tr>
+      <th class="col-sm-2 text-center">Cryptocurrency</th>
+      <th class="col-sm-2 text-center">Influence</th>
+    </tr>
     <% @article.influences.each do |influence| %>
-        <%= "The article could influence #{influence.knn.currency.full_name} to #{influence.classification}"%>
+      <tr>
+        <td><%= influence.knn.currency.full_name %></td>
+        <td><%= influence.classification %></td>
+      </tr>
     <% end %>
-</p>
+</table>
 
-<%= link_to 'Back to main page', currencies_path %> |
-<%= link_to 'Back to recent articles', articles_path %>
+
+<%= link_to 'Back to recent articles', articles_path, class: "btn btn-default" %>
+
+</div>
