@@ -1,0 +1,23 @@
+<nav class="navbar navbar-inverse" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <li class="active"><a class="navbar-brand" href="/">CAP</a></li>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href=<%= new_portfolio_path%>>Portfolio</a></li>
+        <li><a href=<%= articles_path%>>News</a></li>
+        <li class="Detailed Analysis">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Individual Analysis <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <% Currency.all.each do |currency| %>
+                <li><a href=<%= currency_path(currency)%>> <%= currency.full_name %>  </a></li>
+            <% end %>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+
+  </div>
+</nav>
