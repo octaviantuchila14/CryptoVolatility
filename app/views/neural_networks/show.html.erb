@@ -1,36 +1,44 @@
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 
-<text>
-  Future predictions obtained with Machine Learning
-</text><br><br>
+<div class="text-center container">
 
-<%= "Currency Historic data" %>
-<% pp "exchange rates for predicted currency #{@pred_currency.full_name}, are #{@pred_currency.exchange_rates.size}"%>
-<%= line_chart exchange_rates_as_hash(@pred_currency.exchange_rates), library: {vAxis: {title: "US Dollars"}} %>
+<%# "Currency Historic data" %>
+<%#line_chart exchange_rates_as_hash(@pred_currency.exchange_rates), library: {vAxis: {title: "US Dollars"}} %>
 
-<text>
-  Estimation for the following week.
-</text><br><br>
+  <h3>
+    Future predictions obtained with Machine Learning.
+  </h3><br><br>
 
-<%= "Neural network with backpropagation estimation" %>
 <%= line_chart [{name: "Predictions", data: exchange_rates_as_hash(@nn_ers)},
                 {name: "Previous Week", data: exchange_rates_as_hash(@pred_currency.last_week_rates)}],
                 library: {vAxis: {title: "US Dollars"}, colors: ["red", "blue"]} %>
 
-<text>
-  You want to find out more about the currency?
-</text><br>
-<%= link_to 'Back to the currency\'s page', currency_path(@pred_currency)%>
-<br><br><br>
+  <text>Estimation done using reccurent neural networks.</text>
+  <br><br><br>
 
-<text>
-  You want to find out how news articles will affect future prices?
-</text>
-<br>
-<%= link_to 'Back to main page', currencies_path %>
+  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#retrainModal">
+    Can you give more details about the prediction?
+  </button>
+  <!-- Modal -->
+  <div class="modal fade" id="retrainModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Details</h4>
+        </div>
+        <div class="modal-body">
+          We are using Reccurent Neural Networks as they have been found to give the best estimations for a set of consecutive exchange rates.
+          <br><br>
+          We are training and verifying them using historic data shuffled randomly.
+          <br><br>
+          They are retrained every month in order to maintain accuracy.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-
-<%# line_chart [
-                       {name: "Series A", data: series_a},
-                       {name: "Series B", data: series_b}
-               ] %>
+</div>
