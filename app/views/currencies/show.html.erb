@@ -1,13 +1,16 @@
-<p>
-  <strong>Name:</strong>
-  <%= @currency.full_name %>
-</p>
+<div class="text-center container">
 
-<br><text>
+<h2>
+  <%= @currency.full_name %>
+</h2>
+
+<br><br><br>
+
+<p class="lead">
   Want to know if the currency is a stable investment?
   <br>
   See how the currency is connected with other currencies, markets and assets!
-</text><br>
+</p>
 
 <%=form_for @currency do |f| %>
     <%= f.hidden_field :prediction_type, value: :capm%>
@@ -15,14 +18,15 @@
 <% end %>
 
 
-<br><text>
+<br><br><br><br><br>
+
+<p class="lead">
   See how the currency's price will evolve!
-</text><br>
+</p>
 
 <%=form_for @currency do |f| %>
     <%= f.hidden_field :prediction_type, value: :neural_network%>
     <%= f.submit "Machine Learning future predictions", class: "btn btn-primary" %>
 <% end %>
 
-<br><br>
-<%= link_to 'Back to main page', currencies_path %>
+</div>
