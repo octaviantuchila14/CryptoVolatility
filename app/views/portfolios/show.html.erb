@@ -23,6 +23,7 @@
       <%= number_to_percentage(100 * @portfolio.max_return) %>
     </p>
 
+
       <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
         How is the maximum return computed?
       </button>
@@ -58,8 +59,11 @@
                     </ul>
                   </div>
               <% end %>
-            <%= f.label "Portfolio Return" %>
+          <p class="lead">
+            <%= f.label "Portfolio Return"%>
+          </p>
             <%= f.number_field :p_return, id:"return_number", step: "any" %>
+          <br>
             <%= f.submit "Obtain optimal portfolio", class: "btn btn-primary" %>
         <% end %>
     </div>
@@ -71,9 +75,11 @@
     <div id="computed_portfolio">
       <% if(@portfolio.p_return != nil && (@portfolio.p_return/100).between?(0, @portfolio.max_return)) %>
 
+          <p class="lead">
           <strong>Optimal Variance:</strong>
-          <%= @portfolio.variance %>
+          <%= @portfolio.variance.round(5) %>
           <br>
+          </p>
 
           <button type="button" class="btn btn-info" data-toggle="modal" data-target="#varModal">
             What is variance?
