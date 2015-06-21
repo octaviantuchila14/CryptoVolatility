@@ -64,7 +64,9 @@
         <% end %>
     </div>
 
-    <br><br>
+  <br><br><br><br>
+  <br><br><br><br>
+  <br><br><br><br>
 
     <div id="computed_portfolio">
       <% if(@portfolio.p_return != nil && (@portfolio.p_return/100).between?(0, @portfolio.max_return)) %>
@@ -100,21 +102,49 @@
 
 
           <br><br><br>
-          <text>Our portfolio will have the following currencies with their respective weights</text>
-
+          <p class="lead">Our portfolio will have the following currencies with their respective weights</p>
           <br>
-          <table id="wt">
-            <tr>
-              <th>Currency</th>
-              <th>Weight</th>
-            </tr>
-            <% @portfolio.currencies.each do |cr| %>
+
+          <div class="container">
+              <table id="wt" class="table table-bordered table-hover">
                 <tr>
-                  <td class="full_name"><%= cr.full_name %></td>
-                  <td class="weight"><%= number_to_percentage(@portfolio.weights[cr.full_name].to_f * 100) %></td>
+                  <th class="col-sm-2 text-center">Currency</th>
+                  <th class="col-sm-2 text-center">Weight</th>
                 </tr>
-            <% end %>
-          </table>
+                <% @portfolio.currencies.each do |cr| %>
+                    <tr>
+                      <td class="full_name"><%= cr.full_name %></td>
+                      <td class="weight"><%= number_to_percentage(@portfolio.weights[cr.full_name].to_f * 100) %></td>
+                    </tr>
+                <% end %>
+              </table>
+          </div>
+          <br>
+
+          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#weightsModal">
+            How where the weights computed?
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="weightsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="myModalLabel">The Markowitz Model</h4>
+                </div>
+                <div class="modal-body">
+                  The Markowitz Model
+                  <br><br>
+                  We used an optimization model called the Markowitz Model.
+                  When given an expected return, the model computes the weight of each asset in the portfolio such that the risk is minimised.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br><br><br>
 
           <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
           <% if(@portfolio.weights.values.all? {|w| w.to_f > 0})%>
@@ -122,10 +152,6 @@
           <% end %>
           <%= column_chart @portfolio.weights %>
 
-          <br><br>
-          <text>
-            Find out more about each individual currency.
-          </text>
       <% end %>
     </div>
 </div>
