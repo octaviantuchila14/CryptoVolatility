@@ -235,6 +235,8 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (1.4.1)
+    time_difference (0.4.2)
+      activesupport
     turbolinks (2.5.3)
       coffee-rails
     tzinfo (1.2.2)
@@ -285,6 +287,7 @@ DEPENDENCIES
   spring
   statsample
   statsample-bivariate-extension
+  time_difference
   tlearn!
   turbolinks
   uglifier (>= 1.3.0)

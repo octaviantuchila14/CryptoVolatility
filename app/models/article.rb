@@ -27,6 +27,23 @@ class Article < ActiveRecord::Base
     end
   end
 
+  def time_span
+    day = DateTime.now.day - self.published_at.day
+    hour = DateTime.now.hour - self.published_at.hour
+    min = DateTime.now.min - self.published_at.min
+
+    res = ""
+
+    res << "#{day} day " if(day == 1)
+    res << "#{day} days " if(day > 1)
+    res << "#{hour} hour " if(hour == 1)
+    res << "#{hour} hours " if(hour > 1)
+    res << "#{min} minute " if(min == 1)
+    res << "#{min} minutes " if(min > 1)
+
+    res
+  end
+
   private
 
   def self.add_entries(entries)
@@ -43,4 +60,5 @@ class Article < ActiveRecord::Base
       end
     end
   end
+
 end

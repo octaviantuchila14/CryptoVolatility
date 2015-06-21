@@ -1,12 +1,17 @@
-<p id="notice"><%= notice %></p>
+<div class="container text-center">
 
-<div class="panel panel-default">
-  <div class="panel-heading"><h4>Recent Cryptocurrency Articles</h4></div>
-  <% @articles.each do |article| %>
-      <b><a href=<%= "articles/#{article.id}" %> class="list-group-item"><%= article.name %></a></b>
-  <% end %>
-  </ul>
+    <h4>Recent Cryptocurrency Articles</h4>
+
+    <table class="table table-bordered table-hover">
+      <tr>
+        <th class="col-sm-2 text-center">Title</th>
+        <th class="col-sm-2 text-center">Release time</th>
+      </tr>
+      <% @articles.sort_by { |a| a.published_at }.reverse!.each do |article| %>
+          <tr>
+            <td><a href=<%= "articles/#{article.id}" %> > <%= article.name %> </a></td>
+            <td><%= "#{article.time_span} ago"%></td>
+          </tr>
+      <% end %>
+    </table>
 </div>
-
-<br>
-<%= link_to 'Back to main page', currencies_path %>
