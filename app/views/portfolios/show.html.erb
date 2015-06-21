@@ -1,80 +1,131 @@
-<text>
-  You have created a portfolio.
-  <br><br>
-  Now, select how much return you would want for the portfolio.
-  <br>
-  The bigger the return, the bigger the risk!
-</text>
 
-<p>
-  <strong>Start date:</strong>
-  <%= @portfolio.start_date %>
-</p>
-
-<p>
-  <strong>End date:</strong>
-  <%= @portfolio.end_date %>
-</p>
-
-<p>
-  <strong>Portfolio maximum return:</strong>
-  <%= number_to_percentage(100 * @portfolio.max_return) %>
-</p>
-
-<div id="return_p" >
-    <%=form_for @portfolio do |f| %>
-          <% if @portfolio.errors.any? %>
-              <div id="error_explanation">
-                <h2><%= pluralize(@portfolio.errors.count, "error") %> prohibited this portfolio from being saved:</h2>
-                <ul>
-                  <% @portfolio.errors.full_messages.each do |message| %>
-                      <li><%= message %></li>
-                  <% end %>
-                </ul>
-              </div>
-          <% end %>
-        <%= f.label "Portfolio Return" %>
-        <%= f.number_field :p_return, id:"return_number", step: "any" %>
-        <%= f.submit "Obtain optimal portfolio", class: "btn btn-primary" %>
-    <% end %>
-</div>
-
-<br><br>
-
-<div id="computed_portfolio">
-  <% if(@portfolio.p_return != nil && (@portfolio.p_return/100).between?(0, @portfolio.max_return)) %>
-
-      <strong>Optimal Variance:</strong>
-      <%= @portfolio.variance %>
-      <br>
-      <text>Our portfolio will have the following currencies with their respective weights</text>
-
-      <br>
-      <table id="wt">
-        <tr>
-          <th>Currency</th>
-          <th>Weight</th>
-        </tr>
-        <% @portfolio.currencies.each do |cr| %>
-            <tr>
-              <td class="full_name"><%= cr.full_name %></td>
-              <td class="weight"><%= number_to_percentage(@portfolio.weights[cr.full_name].to_f * 100) %></td>
-            </tr>
-        <% end %>
-      </table>
-
-      <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
-      <% if(@portfolio.weights.values.all? {|w| w.to_f > 0})%>
-        <%= pie_chart @portfolio.weights %>
-      <% end %>
-      <%= column_chart @portfolio.weights %>
-
+<div class="text-center">
+    <p class="lead">
+      You have created a portfolio.
       <br><br>
-      <text>
-        Find out more about each individual currency.
-      </text>
-  <% end %>
+      Now, select how much return you would want for the portfolio.
+      <br><br>
+      The bigger the return, the bigger the risk!
+    </p>
+
+    <p>
+      <strong>Start date:</strong>
+      <%= @portfolio.start_date %>
+    </p>
+
+    <p>
+      <strong>End date:</strong>
+      <%= @portfolio.end_date %>
+    </p>
+
+    <p>
+      <strong>Portfolio maximum return:</strong>
+      <%= number_to_percentage(100 * @portfolio.max_return) %>
+    </p>
+
+      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
+        How is the maximum return computed?
+      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">Maximum Return</h4>
+            </div>
+            <div class="modal-body">
+              We are taking the maximum returns across al currencies, regardless of risk.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <br><br><br><br>
+
+    <div id="return_p" >
+        <%=form_for @portfolio do |f| %>
+              <% if @portfolio.errors.any? %>
+                  <div id="error_explanation">
+                    <h2><%= pluralize(@portfolio.errors.count, "error") %> prohibited this portfolio from being saved:</h2>
+                    <ul>
+                      <% @portfolio.errors.full_messages.each do |message| %>
+                          <li><%= message %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+              <% end %>
+            <%= f.label "Portfolio Return" %>
+            <%= f.number_field :p_return, id:"return_number", step: "any" %>
+            <%= f.submit "Obtain optimal portfolio", class: "btn btn-primary" %>
+        <% end %>
+    </div>
+
+    <br><br>
+
+    <div id="computed_portfolio">
+      <% if(@portfolio.p_return != nil && (@portfolio.p_return/100).between?(0, @portfolio.max_return)) %>
+
+          <strong>Optimal Variance:</strong>
+          <%= @portfolio.variance %>
+          <br>
+
+          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#varModal">
+            What is variance?
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="varModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="myModalLabel">Variance</h4>
+                </div>
+                <div class="modal-body">
+                  The variance is a statistical measure which shows how spread out a set of numbers is.
+                  <br><br>
+                  It is used in finance as a measure of risk.
+                  The bigger it is, the smaller the chances of getting the return you want.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <br><br><br>
+          <text>Our portfolio will have the following currencies with their respective weights</text>
+
+          <br>
+          <table id="wt">
+            <tr>
+              <th>Currency</th>
+              <th>Weight</th>
+            </tr>
+            <% @portfolio.currencies.each do |cr| %>
+                <tr>
+                  <td class="full_name"><%= cr.full_name %></td>
+                  <td class="weight"><%= number_to_percentage(@portfolio.weights[cr.full_name].to_f * 100) %></td>
+                </tr>
+            <% end %>
+          </table>
+
+          <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+          <% if(@portfolio.weights.values.all? {|w| w.to_f > 0})%>
+            <%= pie_chart @portfolio.weights %>
+          <% end %>
+          <%= column_chart @portfolio.weights %>
+
+          <br><br>
+          <text>
+            Find out more about each individual currency.
+          </text>
+      <% end %>
+    </div>
 </div>
-
-
-<%= link_to 'Back to main page', currencies_path %>
