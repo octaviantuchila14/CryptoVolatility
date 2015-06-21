@@ -1,37 +1,33 @@
-<h1> Cryptocurrency Analyser and Predictor </h1>
+<div class="text-center container">
+    <h1> Cryptocurrency Analyser and Predictor </h1>
 
-<br>
-<br>
+    <br>
+    <br>
 
-<div class="panel panel-default">
-    <div class="panel-heading"><h4>Cryptocurrencies</h4></div>
-    <div class="panel-body">
-    Find out more about each one by clicking on it.
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Cryptocurrencies</h4></div>
+        <div class="panel-body">
+        Find out more about each one by clicking on it.
+        </div>
+        <% @currencies.each do |currency| %>
+            <b><a href=<%= "currencies/#{currency.id}" %> class="list-group-item"><%= currency.full_name %></a></b>
+        <% end %>
+      </ul>
     </div>
-    <% @currencies.each do |currency| %>
-        <b><a href=<%= "currencies/#{currency.id}" %> class="list-group-item"><%= currency.full_name %></a></b>
-    <% end %>
-  </ul>
-</div>
 
-<div class="row">
-  <div class="col-sm-6 col-md-4">
-    <div class="thumbnail">
-      <div class="caption">
-        <h3>Portfolio</h3>
-        <b>See how much you can gain by assembling a portfolio.</b>
-        <a href="portfolios/new" class="btn btn-primary btn-lg active" role="button">Create portfolio</a>
-      </div>
-    </div>
-  </div>
+        <div class="thumbnail">
+          <div class="caption">
+            <h3>Portfolio</h3>
+            <b>See how much you can gain by assembling a portfolio.</b><br>
+            <a href="portfolios/new" class="btn btn-primary btn-lg active" role="button">Create portfolio</a>
+          </div>
+        </div>
 
-  <div class="col-sm-6 col-md-4">
-    <div class="thumbnail">
-      <div class="caption">
-        <h3>News Effect</h3>
-        <b>See how news articles affect cryptocurrency prices.</b>
-        <p><a href="articles" class="btn btn-primary btn-lg active" role="button">News articles</a></p>
-      </div>
-    </div>
-  </div>
+        <div class="thumbnail">
+          <div class="caption">
+            <h3>News Effect</h3>
+            <b>See how news articles affect cryptocurrency prices.</b><br>
+            <p><a href="articles" class="btn btn-primary btn-lg active" role="button">News articles</a></p>
+          </div>
+        </div>
 </div>
