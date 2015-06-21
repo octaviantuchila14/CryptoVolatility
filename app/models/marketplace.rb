@@ -38,6 +38,11 @@ class Marketplace < ActiveRecord::Base
     rs_c = x.last_month
     rs_m = compute_market
 
+    extra_cr_dates = rs_c.map{|er| er[:date]} - rs_m.map{|er| er[:date]}
+    extra_mr_dates = rs_m.map{|er| er[:date]} - rs_c.map{|er| er[:date]}
+    rs_c = rs_c.select{|er| extra_cr_dates.include?(er[:date]) == false}
+    rs_m = rs_m.select{|er| extra_mr_dates.include?(er[:date]) == false}
+
     capm_data = {}
     capm_data[:beta] = Statsample::Bivariate.covariance(rs_c.map{|r| r[:return]}.to_scale, rs_m.map{|r| r[:return]}.to_scale)/(rs_m.map{|r| r[:return]}.to_scale.variance_sample)
     capm_data[:expected_return] = 0.000021 + capm_data[:beta]*(rs_m.last[:return] - 0.000021)
