@@ -5,12 +5,10 @@
     <table class="table table-bordered table-hover">
       <tr>
         <th class="col-sm-2 text-center">Title</th>
-        <th class="col-sm-2 text-center">Release time</th>
       </tr>
       <% @articles.sort_by { |a| a.published_at }.reverse!.each do |article| %>
           <tr>
             <td><a href=<%= "articles/#{article.id}" %> > <%= article.name %> </a></td>
-            <td><%= "#{article.time_span} ago"%></td>
           </tr>
       <% end %>
     </table>
